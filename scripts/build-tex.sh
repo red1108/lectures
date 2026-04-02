@@ -52,6 +52,29 @@ find_main_tex() {
   return 1
 }
 
+cleanup_root_artifacts() {
+  local base="$1"
+
+  rm -f \
+    "$base.aux" \
+    "$base.bbl" \
+    "$base.bcf" \
+    "$base.blg" \
+    "$base.fdb_latexmk" \
+    "$base.fls" \
+    "$base.lof" \
+    "$base.log" \
+    "$base.lot" \
+    "$base.nav" \
+    "$base.out" \
+    "$base.run.xml" \
+    "$base.snm" \
+    "$base.synctex.gz" \
+    "$base.toc" \
+    "$base.vrb" \
+    "$base.xdv"
+}
+
 tex_file="$(resolve_path "$input_path")"
 tex_dir="$(dirname "$tex_file")"
 
@@ -75,6 +98,7 @@ engine="$(detect_engine "$root_tex")"
 
 mkdir -p "$out_dir"
 cd "$root_dir"
+cleanup_root_artifacts "$root_base"
 
 if ! command -v "$engine" >/dev/null 2>&1; then
   echo "LaTeX engine not found: $engine" >&2
@@ -96,3 +120,5 @@ fi
 if [[ -f "$build_pdf" ]]; then
   cp "$build_pdf" "$final_pdf"
 fi
+
+cleanup_root_artifacts "$root_base"

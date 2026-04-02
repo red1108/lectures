@@ -8,23 +8,11 @@
     "**/references/**": true
   },
   "latex-workshop.latex.autoBuild.run": "onSave",
-  "latex-workshop.latex.recipe.default": "first",
-  "latex-workshop.latex.recipes": [
-    {
-      "name": "repo-build",
-      "tools": [
-        "repo-build"
-      ]
-    }
-  ],
-  "latex-workshop.latex.tools": [
-    {
-      "name": "repo-build",
-      "command": "${workspaceFolder}/scripts/build-tex.sh",
-      "args": [
-        "%DOC%"
-      ]
-    }
+  "latex-workshop.latex.outDir": "%DIR%/builds",
+  "latex-workshop.latex.auxDir": "%DIR%/builds",
+  "latex-workshop.latex.external.build.command": "./scripts/build-tex.sh",
+  "latex-workshop.latex.external.build.args": [
+    "%DOC_EXT%"
   ],
   "latex-workshop.view.pdf.viewer": "tab"
 }

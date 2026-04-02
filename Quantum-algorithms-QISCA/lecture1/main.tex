@@ -4,6 +4,7 @@
 \usepackage[normalem]{ulem}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
+\usepackage{tikz}
 \usepackage{booktabs}
 \usepackage{mathtools}
 
@@ -54,6 +55,122 @@
 \begin{document}
 
 \frame{\titlepage}
+
+\begin{frame}
+  \frametitle{Welcome}
+  Welcome everyone! I'm so excited to have you in the course, and I hope these materials help you build both intuition and technical depth.
+
+  \vspace{0.8em}
+  All lecture materials will be available on my personal homepage and on GitHub:
+
+  \vspace{0.4em}
+  \url{https://github.com/red1108/lectures}
+\end{frame}
+
+\begin{frame}
+  \frametitle{About Me}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.34\textwidth}
+      \centering
+      \begin{tikzpicture}
+        \clip (0,0) circle (1.7cm);
+        \node at (0,0) {\includegraphics[width=4.2cm]{../imgs/profile.png}};
+      \end{tikzpicture}
+    \end{column}
+    \begin{column}{0.62\textwidth}
+      \textbf{Hello, I am Mingyu Lee.}
+
+      \vspace{0.6em}
+      I am a fourth-year undergraduate from Seoul National University, currently an exchange student at UC Davis.
+
+      \vspace{0.8em}
+      Personal homepage: \url{https://red1108.github.io/}
+
+      \vspace{0.3em}
+      LinkedIn: \url{https://linkedin.com/in/red1108/}
+    \end{column}
+  \end{columns}
+
+  \vspace{1em}
+
+  \begin{block}{Research Interests}
+    I am studying quantum computation, quant trading, algorithms, and machine learning.
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{About This Course}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.56\textwidth}
+      {\large \textbf{Overview}}
+
+      \vspace{0.6em}
+      \begin{itemize}
+        \item Major ideas in quantum algorithms
+        \item Basic building blocks and frameworks
+        \item Selected techniques with quantum complexity context
+        \item Where quantum speedups may arise
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      {\large \textbf{Goals}}
+
+      \vspace{0.6em}
+      \begin{itemize}
+        \item Build intuition for algorithms and complexity
+        \item Learn several core quantum techniques
+        \item Identify tasks that may benefit from quantum methods
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}
+  \frametitle{About This Course}
+  \begin{columns}[T,totalwidth=\textwidth]
+    \begin{column}{0.48\textwidth}
+      {\large \textbf{Plan}}
+
+      \vspace{0.5em}
+      \begin{itemize}
+        \item Online format
+        \item 5--10 participants
+        \item Basic background, around Grover search
+        \item 8 weeks
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      {\large \textbf{Notes}}
+
+      \vspace{0.5em}
+      \begin{itemize}
+        \item Schedule can be adjusted to fit the group
+        \item Detailed dates after participant recruitment
+        \item Reading + discussion oriented progression
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Tentative Schedule}
+  \scriptsize
+  \renewcommand{\arraystretch}{1.18}
+  \begin{tabular}{p{1.25cm} p{3.45cm} p{2.1cm} p{3.1cm}}
+    \toprule
+    \textbf{Date} & \textbf{Study content} & \textbf{Person in charge} & \textbf{Additional notes} \\
+    \midrule
+    3/27 Fri & Quantum Complexity & Mingyu Lee & About oracle \\
+    4/3 Fri & Quantum Amplitude Amplification & Mingyu Lee & Grover search, quantum amplitude estimation \\
+    4/10 Fri & Quantum Min/Max Searching & Mingyu Lee &  \\
+    4/17 Fri & Quantum Analog-Digital Conversion & Mingyu Lee & Swap test, k-NN \\
+    4/24 Fri & Quantum Walk & Mingyu Lee &  \\
+    5/8 Fri & HHL & Mingyu Lee &  \\
+    5/15 Fri & QSVT & Mingyu Lee &  \\
+    5/22 Fri & Quadratic Speedup & Mingyu Lee & planted k-XOR, community detection \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
 
 \begin{frame}
   \frametitle{Outline}
