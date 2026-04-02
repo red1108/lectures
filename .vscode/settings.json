@@ -1,0 +1,30 @@
+{
+  "files.watcherExclude": {
+    "**/builds/**": true,
+    "**/references/**": true
+  },
+  "search.exclude": {
+    "**/builds/**": true,
+    "**/references/**": true
+  },
+  "latex-workshop.latex.autoBuild.run": "onSave",
+  "latex-workshop.latex.recipe.default": "first",
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "repo-build",
+      "tools": [
+        "repo-build"
+      ]
+    }
+  ],
+  "latex-workshop.latex.tools": [
+    {
+      "name": "repo-build",
+      "command": "${workspaceFolder}/scripts/build-tex.sh",
+      "args": [
+        "%DOC%"
+      ]
+    }
+  ],
+  "latex-workshop.view.pdf.viewer": "tab"
+}

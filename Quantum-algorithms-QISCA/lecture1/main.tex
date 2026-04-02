@@ -1,0 +1,108 @@
+% !TEX program = pdflatex
+\documentclass[xcolor=table]{beamer}
+
+\usepackage[normalem]{ulem}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{mathtools}
+
+\usetheme{Madrid}
+\usecolortheme{default}
+\setbeamertemplate{theorems}[numbered]
+\setbeamertemplate{bibliography item}[text]
+
+% 하단 바: 이름(15%) | 제목(40%) | 섹션(35%) | 페이지(10%)
+\setbeamertemplate{footline}{%
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.15\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+      \usebeamerfont{author in head/foot}\insertshortauthor
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.40\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+      \usebeamerfont{title in head/foot}\insertshorttitle
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.35\paperwidth,ht=2.25ex,dp=1ex,center]{date in head/foot}%
+      \usebeamerfont{date in head/foot}\insertsectionhead
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.10\paperwidth,ht=2.25ex,dp=1ex,right]{title in head/foot}%
+      \insertframenumber{} / \inserttotalframenumber\hspace*{2ex}
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+\setbeamertemplate{navigation symbols}{}
+
+\pdfstringdefDisableCommands{%
+  \def\\{ }%
+}
+
+\title[Quantum Algorithms]{Quantum Algorithms}
+\subtitle{Seminar Template}
+\author[Mingyu Lee]{Mingyu Lee\\{\small Seoul National University}}
+\institute{\small red1108@snu.ac.kr\\+82 010-2857-3320 (only text)\\+01 530-760-8690}
+\date{\today}
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}
+  \frametitle{Outline}
+  \tableofcontents
+\end{frame}
+
+\section{Introduction}
+
+\begin{frame}
+  \frametitle{What is this seminar?}
+  \begin{itemize}
+    \item This is a starter Beamer deck for a new seminar.
+    \item Theme and footer style follow your requested format settings.
+    \item Contact information is placed on the title slide.
+  \end{itemize}
+\end{frame}
+
+\section{Example Content}
+
+\begin{frame}
+  \frametitle{Example: Key Topics}
+  \begin{block}{Topics in Quantum Algorithms}
+    \begin{itemize}
+      \item Quantum Fourier Transform (QFT)
+      \item Phase Estimation
+      \item Grover Search
+      \item Hamiltonian Simulation
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example: Simple Formula Slide}
+  For example, the Hadamard transform on one qubit:
+  \[
+    H\lvert 0 \rangle = \frac{\lvert 0 \rangle+\lvert 1 \rangle}{\sqrt{2}},
+    \qquad
+    H\lvert 1 \rangle = \frac{\lvert 0 \rangle-\lvert 1 \rangle}{\sqrt{2}}.
+  \]
+
+  \vspace{0.6em}
+  This template is ready to be extended with your seminar materials. ~\cite{nielsen2010quantum}
+\end{frame}
+
+\section{References}
+
+\begin{frame}[allowframebreaks]{References}
+  \bibliographystyle{alpha}
+  \bibliography{citation}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,21 @@
+**/builds/
+**/references/
+
+# LaTeX auxiliary files in case a document is built outside builds/
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.nav
+*.out
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+*.xdv
