@@ -14,5 +14,7 @@
   "latex-workshop.latex.external.build.args": [
     "%DOC_EXT%"
   ],
-  "latex-workshop.view.pdf.viewer": "tab"
+  "latex-workshop.synctex.afterBuild.enabled": true,
+  "latex-workshop.view.pdf.viewer": "tab",
+  "latex-workshop.view.pdf.internal.synctex.keybinding": "double-click"
 }
