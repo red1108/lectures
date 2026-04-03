@@ -91,7 +91,7 @@
   \vspace{0.8em}
   \url{https://github.com/red1108/lectures}
   \vspace{0.8em}
-  
+
   {\small (You can also track my last-minute slide prep through the commit history.)}
 \end{frame}
 
@@ -156,15 +156,20 @@
   \vspace{0.5em}
   \begin{itemize}
     \item 5--10 participants (Actually, 14)
-    \item Basic background, around Grover search (I hope)
+    \item Basic background, around Grover search.
     \item 8 weeks
+    \item Using latex slides, If I have time to prepare.
+    \item Interactive!
   \end{itemize}
 
   \vspace{0.8em}
 
   {\large \textbf{Notes}}
-  \vspace{0.5em}
+  \vspace{1em}
   \textbf{Schedule can be adjusted to fit the group}
+  \vspace{0.5em}
+
+  {\small It already has: Fri 15:00, then Fri 16:00, and now Fri 16:30. \\ A very efficient optimization process.}
 \end{frame}
 
 \begin{frame}
@@ -197,6 +202,15 @@
   {\tiny * Special speaker}
 \end{frame}
 
+
+\begin{frame}
+  \frametitle{Survey time!}
+  % survey_1.png includ
+  \begin{center}
+    \includegraphics[width=0.8\textwidth,height=0.6\textheight,keepaspectratio]{../imgs/survey_1.png}
+  \end{center}
+\end{frame}
+
 \begin{frame}
   \frametitle{Outline}
   \tableofcontents
@@ -214,20 +228,33 @@
   \end{itemize}
   
   \vspace{0.5cm}
-  \textbf{But does this Oracle access just magically build itself?}
+  \only<5->{\textbf{But does this Oracle access just magically build itself?}}
+
+  \only<5->{\small Did our ancestors hand it down to us?}
 \end{frame}
 
 \begin{frame}
   \frametitle{Why Does the Oracle Feel Suspicious?}
-  \begin{itemize}[<+->]
-    \item We want to find an input $x$ such that $f(x)=1$
-    \item In the quantum setting, this is phrased as oracle access to $f$
-    \item That can sound like we are handing the quantum algorithm a mysterious black box
-    \item Are we giving quantum extra power just by how we defined the model?
-  \end{itemize}
+  \begin{columns}[T]
+    \begin{column}{0.66\textwidth}
+      \begin{itemize}[<+->]
+        \item We want to find an input $x$ such that $f(x)=1$
+        \item In the quantum setting, this is phrased as oracle access to $f$
+        \item That can sound like we are handing the quantum algorithm a mysterious black box
+        \item Are we giving quantum extra power just by how we defined the model?
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.34\textwidth}
+      \only<3->{\centering
+      \includegraphics[width=\textwidth,height=0.55\textheight,keepaspectratio]{../imgs/quantum_oracle.png}}
+    \end{column}
+  \end{columns}
 
   \vspace{0.5cm}
-  \textbf{But why do we rarely ask the same question on the classical side?}
+  \only<5->{\textbf{But why do we rarely ask the same question on the classical side?}}
+  
+  \vspace{0.2cm}
+  {\tiny \only<3->{\makebox[\textwidth][l]{Image source: \url{https://www.hayhouse.com/the-quantum-oracle-card-deck?srsltid=AfmBOoq5NoSrzFKPZUm3H9vLmz5C8wuV4hZ2EFzMWBx6To7C59JYmZWp}}}}
 \end{frame}
 
 \begin{frame}
@@ -240,7 +267,7 @@
   \end{itemize}
 
   \vspace{0.5cm}
-  \textbf<4->{The quantum oracle is the same hidden assumption, written in quantum language.}
+  \only<5->{\textbf{The quantum oracle is the same hidden assumption, written in quantum language.}}
 \end{frame}
 
 \begin{frame}
@@ -254,10 +281,10 @@
   \end{itemize}
 
   \vspace{0.5cm}
-  \textbf<4->{So the oracle model is not giving quantum a special advantage by definition.}
+  \only<5->{\textbf{So the oracle model is not giving quantum a special advantage by definition.}}
 
   \vspace{0.3cm}
-  \textbf<4->{But, in some senses, your concern is valid....}
+  \only<6->{\textbf{But, in some senses, your concern is valid....}}
 \end{frame}
 
 \section{Query Complexity}
@@ -276,9 +303,10 @@
   \end{itemize}
 
   \vspace{0.5cm}
+  \only<4->{%
   The evaluation cost is abstracted away in both models;
 
-  \textbf{That's why we only consider the query complexity.}
+  \textbf{That's why we only consider the query complexity.}}
 \end{frame}
 
 
@@ -338,7 +366,7 @@
   \end{itemize}
 
   \vspace{0.5cm}
-  \only<4->{%
+  \only<5->{%
   \[
     \text{query complexity} = \# \text{ accesses to } f
   \]}
@@ -362,6 +390,7 @@
     \item For search, the classical algorithm simply keeps asking:
   \end{itemize}
 
+  \only<4->{%
   \vspace{0.4cm}
   
   \[
@@ -370,7 +399,7 @@
 
   \vspace{0.3cm}
   
-  \textbf{Quantum query algorithms should be compared against this same access model.}
+  \textbf{Quantum query algorithms should be compared against this same access model.}}
 \end{frame}
 
 \begin{frame}
@@ -575,9 +604,17 @@
   \vspace{0.3cm}
   {\small Here $x\cdot y=\sum_{i=1}^n x_i y_i$, and}
   \[
-    H^{\otimes n}\ket{x}
-    =
-    \frac{1}{\sqrt{2^n}}\sum_{y\in\{0,1\}^n}(-1)^{x\cdot y}\ket{y}.
+    \alt<2->{%
+      \fcolorbox{red}{white}{$\displaystyle
+      H^{\otimes n}\ket{x}
+      =
+      \frac{1}{\sqrt{2^n}}\sum_{y\in\{0,1\}^n}(-1)^{x\cdot y}\ket{y}.
+      $}%
+    }{%
+      H^{\otimes n}\ket{x}
+      =
+      \frac{1}{\sqrt{2^n}}\sum_{y\in\{0,1\}^n}(-1)^{x\cdot y}\ket{y}.
+    }
   \]
 \end{frame}
 
@@ -598,9 +635,10 @@
   \end{itemize}
 
   \vspace{0.4cm}
-  \textbf<3->{Measure $\ket{0^n}$: constant. Measure anything else: balanced.}
+  \only<4->{\textbf{Measure $\ket{0^n}$: constant. Measure anything else: balanced.}}
 \end{frame}
 
+\subsection{Bernstein-Vazirani}
 \begin{frame}
   \frametitle{Bernstein-Vazirani problem}
   \begin{definition}[Bernstein-Vazirani problem]
@@ -626,11 +664,11 @@
   \end{itemize}
 
   \vspace{0.4cm}
-  \only<3->{\includegraphics[width=0.72\textwidth,height=0.42\textheight,keepaspectratio]{../imgs/Deutsch-Jozsa.png}}
+  \only<4->{\includegraphics[width=0.72\textwidth,height=0.42\textheight,keepaspectratio]{../imgs/Deutsch-Jozsa.png}}
 
 
   \vspace{0.3cm}
-  \textbf<3->{Same circuit, different promise, different conclusion.}
+  \only<4->{\textbf{Same circuit, different promise, different conclusion.}}
 \end{frame}
 
 \begin{frame}
@@ -639,6 +677,8 @@
     \frac{1}{2^n}\sum_{x,y\in\{0,1\}^n}(-1)^{f(x)+x\cdot y}\ket{y}
     =
     \frac{1}{2^n}\sum_{x,y\in\{0,1\}^n}(-1)^{x\cdot(s\oplus y)}\ket{y}
+    =
+    \ket{s}.
   \]
 
   \vspace{0.3cm}
@@ -650,7 +690,17 @@
   \end{itemize}
 
   \vspace{0.4cm}
-  \textbf<3->{Quantum: 1 query. Classical: $n$ queries.}
+  \only<4->{\textbf{Quantum: 1 query. Classical: $n$ queries.}}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Survey time!}
+  % survey_1.png includ
+  \begin{center}
+    \includegraphics[width=0.8\textwidth,height=0.6\textheight,keepaspectratio]{../imgs/survey_1.png}
+  \end{center}
+
+  How are you doing so far? Any questions or comments on the material covered up to this point?
 \end{frame}
 
 \section{Total Problems and Search}
@@ -664,7 +714,7 @@
   \end{itemize}
 
   \vspace{0.5cm}
-  \textbf<3->{But there is a catch: both are promise problems.}
+  \only<4->{\textbf{But there is a catch: both are promise problems.}}
 \end{frame}
 
 \begin{frame}
@@ -696,7 +746,7 @@
 
   \begin{itemize}
     \item So total functions cannot exhibit exponential quantum speedups
-    \item At best, the separation is polynomial (quaratic)
+    \item At best, the separation is polynomial (at most quartic)
     \item The huge gaps we saw earlier rely on structure in the input promise
   \end{itemize}
 \end{frame}
@@ -711,7 +761,7 @@
   \end{itemize}
 
   \vspace{0.5cm}
-  \textbf<4->{But if quartic is the maximum for total functions, is quadratic really the end of the story?}
+  \only<5->{\textbf{But if quartic is the maximum for total functions, is quadratic really the end of the story?}}
 
 \end{frame}
 
@@ -722,6 +772,7 @@
     \item Unfortunately, that is not possible.
   \end{itemize}
 
+  \only<3->{%
   \vspace{0.4cm}
 
   \begin{theorem}[Bennett et al.~\cite{bennett1997strengths}]
@@ -731,35 +782,36 @@
     \]
   \end{theorem}
 
-  % add little thinking_face png here
   \begin{center}
     \includegraphics[width=0.2\textwidth,height=0.1\textheight,keepaspectratio]{../../assets/thinking_face.png}
   \end{center}
-  \textbf<2->{let's prove it!}
+  \textbf{let's prove it!}}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Proof for the BBBV Lower Bound}
+  \frametitle{BBBV Proof Roadmap}
   \begin{itemize}[<+->]
-    \item Compare two cases:
-      the all-zero function and a function with exactly one marked input
-    \item If a quantum algorithm makes only a few queries,
-      it cannot noticeably distinguish those two cases
-    \item Therefore, it cannot solve search with high success probability
+    \item Compare two worlds: no marked item vs exactly one marked item
+    \item Find an input $y$ that the algorithm barely touches
+    \item Show that changing the oracle only on that hidden point barely changes the final state
+    \item Conclude that a low-query algorithm cannot reliably distinguish the two worlds
   \end{itemize}
 
   \vspace{0.5cm}
-  \only<3->{%
+  \only<5->{%
   \[
     U_T O_f U_{T-1}\cdots O_f U_1 O_f U_0\ket{0^n}
   \]}
 
   \vspace{0.3cm}
-  {\small \only<3->{A $T$-query algorithm is just a sequence of fixed unitaries alternating with oracle calls.}}
+  {\small \only<5->{A $T$-query algorithm is just a sequence of fixed unitaries alternating with oracle calls.}}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Step 1: Find an Input the Algorithm Barely Touches}
+  \frametitle{Step 1: Find a Point the Algorithm Barely Sees}
+  {\small If $T$ is small, the algorithm cannot place large amplitude on every input.}
+
+  \vspace{0.4cm}
   \[
     \ket{\psi_t}
     :=
@@ -772,6 +824,7 @@
     m_x := \sum_{t=0}^{T-1} |\alpha_{x,t}|^2
   \]
 
+  {\small
   \begin{itemize}[<+->]
     \item $m_x$ measures how much total amplitude the algorithm places on input $x$
     \item Since
@@ -782,37 +835,47 @@
       \[
         m_y \le \frac{T}{2^n}
       \]
-    \item So at least one input is barely examined
+    \item So at least one input $y$ is barely examined
   \end{itemize}
+  }
 \end{frame}
 
 \begin{frame}
-  \frametitle{Step 2: Build Hybrid Oracles}
+  \frametitle{Step 2: Hide the Marked Item at That Point}
+  {\small We now choose the hardest one-marked-item instance by marking exactly that neglected point $y$.}
+
+  \vspace{0.4cm}
   Let $f$ be the function that is $1$ only on $y$ and $0$ elsewhere.
 
   \vspace{0.4cm}
 
+  {\small
   \begin{itemize}[<+->]
     \item Define $O^{(t)}$ so that the first $t$ queries are identity
     \item The remaining $T-t$ queries use the real oracle $O_f$
+    \item This lets us move gradually from the zero function to the one-marked-item function
   \end{itemize}
+  }
 
   \vspace{0.4cm}
-  \only<2->{%
+  \only<4->{%
   \[
     \ket{\phi^{(t)}} :=
     U_T O^{(t)} U_{T-1}\cdots O^{(t)} U_1 O^{(t)} U_0\ket{0^n}
   \]}
 
   \vspace{0.3cm}
-  {\small \only<2->{%
+  {\small \only<4->{%
   $\ket{\phi^{(T)}}$ is the final state for the all-zero function, and
   $\ket{\phi^{(0)}}$ is the final state for the function with one marked item.
   }}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Step 3: Consecutive Hybrids Stay Close}
+  \frametitle{Step 3: Each Hybrid Change Is Tiny}
+  {\small Changing one oracle call matters only through the amplitude already sitting on $y$.}
+
+  \vspace{0.4cm}
   \[
     \|\ket{\phi^{(t+1)}}-\ket{\phi^{(t)}}\|
     =
@@ -821,6 +884,7 @@
     2|\alpha_{y,t}|
   \]
 
+  {\small
   \begin{itemize}[<+->]
     \item Each hybrid step changes the state only through the amplitude sitting on $y$
     \item But $y$ was chosen so that the algorithm barely touches it
@@ -828,16 +892,20 @@
       \[
         \sum_{t=0}^{T-1} |\alpha_{y,t}| \le \frac{T}{\sqrt{2^n}}
       \]
-    \item Therefore,
+    \item Therefore the total change across all hybrids is small:
       \[
         \|\ket{\phi^{(T)}}-\ket{\phi^{(0)}}\|
         \le \frac{2T}{\sqrt{2^n}}
       \]
   \end{itemize}
+  }
 \end{frame}
 
 \begin{frame}
-  \frametitle{Step 4: Close States Are Hard to Distinguish}
+  \frametitle{Step 4: Close States Give Similar Outputs}
+  {\small If the final states are close, then no measurement can separate them well.}
+
+  \vspace{0.4cm}
   \begin{observation}
     If two quantum states are close in Euclidean norm, then their measurement distributions are also close.
   \end{observation}
@@ -850,6 +918,7 @@
     \frac{1}{2}\|p-q\|_1
   \]
 
+  {\small
   \begin{itemize}[<+->]
     \item Here $\mathrm{TV}(p,q)$ is total variation distance
     \item Small total variation means no measurement can reliably tell the two cases apart
@@ -858,14 +927,71 @@
         \|\ket{\phi^{(T)}}-\ket{\phi^{(0)}}\|
         \ll 1,
       \]
-      then the algorithm fails to distinguish “no marked item” from “one marked item”
+      then the algorithm fails to distinguish “all 0” from “one marked item”
   \end{itemize}
+  }
 \end{frame}
 
 \begin{frame}
-  \frametitle{Conclusion of BBBV}
+  \frametitle{Why Distinguishing Matters}
+  {\small A search algorithm must behave differently on the two worlds we are comparing.}
+
+  \vspace{0.4cm}
+  \begin{itemize}[<+->]
+    \item World A: all outputs are $0000000000$
+    \item World B: there is exactly one marked item $...0001000000...$
+    \item A correct search algorithm must distinguish A from B.
+  \end{itemize}
+
+  \vspace{0.5cm}
+  \only<5->{%
+  \begin{proposition}
+    If we sample from $p$ or $q$ with equal prior probability, then any distinguisher succeeds with probability at most
+    \[
+      \frac{1}{2} + \frac{\mathrm{TV}(p,q)}{2}.
+    \]
+  \end{proposition}}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Why This Proposition Is True}
+  {\small A distinguisher is just choosing a set $S$ of outcomes on which it says ``this came from $p$.''}
+
+  \vspace{0.4cm}
+  \[
+    \Pr[\text{success}]
+    =
+    \frac{1}{2}p(S)+\frac{1}{2}q(S^c)
+    =
+    \frac{1}{2}+\frac{1}{2}\bigl(p(S)-q(S)\bigr)
+  \]
+
+  {\small
+  \begin{itemize}[<+->]
+    \item So the best distinguisher tries to maximize $p(S)-q(S)$
+    \item Equivalently,
+      \[
+        \mathrm{TV}(p,q)=\max_S \bigl(p(S)-q(S)\bigr)
+      \]
+    \item Therefore,
+      \[
+        \Pr[\text{success}]
+        \le
+        \frac{1}{2}+\frac{\mathrm{TV}(p,q)}{2}
+      \]
+  \end{itemize}
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{BBBV Conclusion}
+  {\small Search is impossible if those two worlds remain almost indistinguishable.}
+
+  \vspace{0.4cm}
   \[
     \Pr[\text{distinguish correctly}]
+    \le
+    \frac{1}{2} + \frac{\mathrm{TV}(p,q)}{2}
     \le
     \frac{1}{2} + \frac{2T}{\sqrt{2^n}}
   \]
@@ -883,7 +1009,7 @@
   \end{itemize}
 
   \vspace{0.5cm}
-  \textbf<2->{That is exactly the scale achieved by Grover's algorithm.}
+  \only<3->{\textbf{That is exactly the scale achieved by Grover's algorithm.}}
 \end{frame}
 
 \begin{frame}
@@ -896,7 +1022,15 @@
   \end{itemize}
 
   \vspace{0.5cm}
-  \textbf<4->{That is why Grover is the central search algorithm, not just a nice example.}
+  \only<5->{\textbf{That is why Grover is the central search algorithm, not just a nice example.}}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Quiz time!}
+  Only one quiz...
+  \begin{center}
+    \includegraphics[width=0.8\textwidth,height=0.6\textheight,keepaspectratio]{../imgs/survey_1.png}
+  \end{center}
 \end{frame}
 
 \section{References}
