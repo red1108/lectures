@@ -107,7 +107,7 @@ fi
 
 "$engine" -synctex=1 -interaction=nonstopmode -file-line-error -output-directory="$out_dir" "$root_name"
 
-if [[ -f "$aux_file" ]] && grep -q '^\\bibdata{' "$aux_file"; then
+if [[ -f "$aux_file" ]] && grep -q '^\\bibdata{' "$aux_file" && grep -q '^\\citation{' "$aux_file"; then
   (
     cd "$root_dir"
     bibtex "builds/$root_base"

@@ -8,10 +8,34 @@
 \usepackage{booktabs}
 \usepackage{mathtools}
 
+\newcommand{\ket}[1]{\lvert #1 \rangle}
+\newcommand{\bra}[1]{\langle #1 \rvert}
+\newcommand{\braket}[2]{\langle #1 \mid #2 \rangle}
+\newcommand{\ketbra}[2]{\lvert #1 \rangle\!\langle #2 \rvert}
+\newcommand{\proj}[1]{\ketbra{#1}{#1}}
+\newcommand{\thinkingemoji}{%
+  \tikz[baseline=-0.6ex, x=1ex, y=1ex]{
+    \shade[ball color=yellow!80!orange] (0,0) circle (1);
+    \fill (-0.33,0.24) circle (0.08);
+    \fill (0.24,0.18) circle (0.08);
+    \draw[line width=0.08ex] (-0.55,0.43) -- (-0.15,0.34);
+    \draw[line width=0.08ex] (-0.18,-0.23) .. controls (0.03,-0.34) and (0.22,-0.24) .. (0.38,-0.12);
+    \draw[line width=0.12ex, rounded corners=0.12ex] (0.08,-0.58) -- (0.54,-0.28) -- (0.44,-0.02);
+  }%
+}
+\DeclareUnicodeCharacter{1F914}{\thinkingemoji}
+
 \usetheme{Madrid}
 \usecolortheme{default}
 \setbeamertemplate{theorems}[numbered]
 \setbeamertemplate{bibliography item}[text]
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{observation}[theorem]{Observation}
+\newtheorem{result}[theorem]{Result}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\theoremstyle{plain}
 
 % 하단 바: 이름(15%) | 제목(40%) | 섹션(35%) | 페이지(10%)
 \setbeamertemplate{footline}{%
@@ -33,6 +57,7 @@
 }
 
 \setbeamertemplate{navigation symbols}{}
+\setbeamercovered{transparent}
 
 \pdfstringdefDisableCommands{%
   \def\\{ }%
@@ -42,7 +67,7 @@
 \subtitle{Seminar Template}
 \author[Mingyu Lee]{Mingyu Lee\\{\small Seoul National University}}
 \institute{\small red1108@snu.ac.kr\\+82 010-2857-3320 (only text) / +01 530-760-8690}
-\date[2026.04.03(FRI) 16:00 KST]{2026.04.03(FRI) 16:00 KST}
+\date[2026.04.03(FRI) 16:30 KST]{2026.04.03(FRI) 16:30 KST}
 
 \AtBeginSection[]
 {
@@ -63,8 +88,11 @@
   \vspace{0.8em}
   All lecture materials will be available on my personal homepage and on GitHub:
 
-  \vspace{0.4em}
+  \vspace{0.8em}
   \url{https://github.com/red1108/lectures}
+  \vspace{0.8em}
+  
+  {\small (You can also track my last-minute slide prep through the commit history.)}
 \end{frame}
 
 \begin{frame}
@@ -88,11 +116,10 @@
 
       \vspace{0.3em}
       LinkedIn: \url{https://linkedin.com/in/red1108/}
+
     \end{column}
   \end{columns}
-
-  \vspace{1em}
-
+  \vspace{0.5em}
   \begin{block}{Research Interests}
     I am studying quantum computation, quant trading, algorithms, and machine learning.
   \end{block}
@@ -143,12 +170,12 @@
 \begin{frame}
   \frametitle{Lecture Schedule}
   \scriptsize
-  \renewcommand{\arraystretch}{1.3}
-  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.1cm} >{\raggedright\arraybackslash}p{3.45cm} >{\raggedright\arraybackslash}p{2.15cm} >{\raggedright\arraybackslash}p{2.3cm}@{}}
+  \renewcommand{\arraystretch}{0.85}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.1cm} >{\raggedright\arraybackslash}p{3.1cm} >{\raggedright\arraybackslash}p{2.1cm} >{\raggedright\arraybackslash}p{2.7cm}@{}}
     \toprule
     \textbf{Date} & \textbf{Study content} & \textbf{Person in charge} & \textbf{Additional notes} \\
     \midrule
-    \textbf{4/3 Fri} & \textbf{Quantum Complexity} & \textbf{Mingyu Lee} & \textbf{About oracle} \\
+    \textbf{4/3 Fri} & \textbf{Quantum Complexity} & \textbf{Mingyu Lee} & \textbf{About oracle~\cite{grier2024cse291}} \\
     \multicolumn{4}{@{}p{0.94\textwidth}@{}}{\centering\textcolor{gray}{\dotfill}} \\
     4/10 Fri & Quantum Amplitude Amplification & Mingyu Lee & \shortstack[l]{Grover search\\quantum amplitude estimation} \\
     \multicolumn{4}{@{}p{0.94\textwidth}@{}}{\centering\textcolor{gray}{\dotfill}} \\
@@ -166,7 +193,7 @@
     \bottomrule
   \end{tabular}
 
-  \vspace{0.4em}
+  \vspace{0.1em}
   {\tiny * Special speaker}
 \end{frame}
 
@@ -175,47 +202,707 @@
   \tableofcontents
 \end{frame}
 
-\section{Introduction}
+\section{Motivation}
 
 \begin{frame}
-  \frametitle{What is this seminar?}
-  \begin{itemize}
-    \item This is a starter Beamer deck for a new seminar.
-    \item Theme and footer style follow your requested format settings.
-    \item Contact information is placed on the title slide.
+  \frametitle{Back to the Grover Search}
+  \begin{itemize}[<+->]
+    \item Grover is one of the cleanest examples of a quadratic quantum speedup
+    \item The task is simple: find a marked item in an unstructured space
+    \item Classical: $O(N)$, Quantum: $O(\sqrt{N})$ (It's optimal!)
+    \item Grover's algorithms assume oracle access to a Boolean function $f:\{0,1\}^n \to \{0,1\}$ that identifies the marked item
+  \end{itemize}
+  
+  \vspace{0.5cm}
+  \textbf{But does this Oracle access just magically build itself?}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Why Does the Oracle Feel Suspicious?}
+  \begin{itemize}[<+->]
+    \item We want to find an input $x$ such that $f(x)=1$
+    \item In the quantum setting, this is phrased as oracle access to $f$
+    \item That can sound like we are handing the quantum algorithm a mysterious black box
+    \item Are we giving quantum extra power just by how we defined the model?
+  \end{itemize}
+
+  \vspace{0.5cm}
+  \textbf{But why do we rarely ask the same question on the classical side?}
+\end{frame}
+
+\begin{frame}
+  \frametitle{What the Classical Algorithm Already Assumes}
+  \begin{itemize}[<+->]
+    \item A classical $O(N)$ search just checks candidates one by one
+    \item But to check a candidate $x$, we still need to evaluate $f(x)$
+    \item In query complexity, that evaluation cost is packaged into a query and then abstracted away
+    \item Classical search also assumes access to $f$; it just sounds less dramatic
+  \end{itemize}
+
+  \vspace{0.5cm}
+  \textbf<4->{The quantum oracle is the same hidden assumption, written in quantum language.}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Why the Oracle Model Is Fair}
+  \begin{itemize}[<+->]
+    \item Suppose $f$ comes from a practical problem and has a classical circuit description
+    \item Then a quantum circuit can implement the standard oracle
+      $B_f\ket{x}\ket{b} = \ket{x}\ket{b \oplus f(x)}$
+    \item Intuition: implement the classical circuit reversibly and run it in superposition
+    \item If there is no classical circuit for $f$, then the classical black-box model also stops making sense
+  \end{itemize}
+
+  \vspace{0.5cm}
+  \textbf<4->{So the oracle model is not giving quantum a special advantage by definition.}
+
+  \vspace{0.3cm}
+  \textbf<4->{But, in some senses, your concern is valid....}
+\end{frame}
+
+\section{Query Complexity}
+\begin{frame}
+  \frametitle{Only Query Complexity Matters}
+  \begin{claim}
+    Every classical computation can be simulated by a quantum computation.
+  \end{claim}
+
+  \vspace{0.4cm}
+
+  \begin{itemize}[<+->]
+    \item Classical algorithms are built from logical gates such as AND, OR, and NOT
+    \item These can be embedded into reversible circuits
+    \item So evaluating $f$ is not a special burden placed only on the quantum side
+  \end{itemize}
+
+  \vspace{0.5cm}
+  The evaluation cost is abstracted away in both models;
+
+  \textbf{That's why we only consider the query complexity.}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Why the Oracle Model Is Fair}
+
+  In classical computers, every computation is built from logical gates such as AND, OR, and NOT. These can be embedded into reversible circuits.
+
+  \[
+    \ket{a}\ket{b}\ket{0} \xrightarrow{\text{Toffoli}} \ket{a}\ket{b}\ket{a \land b}
+  \]
+
+  \[
+\begin{aligned}
+\ket{a}\ket{b}\ket{0} &\xrightarrow{\text{Three X gates}} \ket{\neg a}\ket{\neg b}\ket{1} \xrightarrow{\text{Toffoli}} \ket{\neg a}\ket{\neg b}\ket{a \lor b} \\
+&\xrightarrow{\text{Two X gates to uncompute}} \ket{a}\ket{b}\ket{a \lor b}
+\end{aligned}
+  \]
+
+  \vspace{0.4cm}
+  \# of two-input gates is same. And, single qubit gates are (almost) free.
+
+  \vspace{0.4cm}
+  \only<2->{Everyone happy?}
+
+  \vspace{0.4cm}
+  \only<3->{Hmm.... }
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Is the Oracle Assumption Fair...?}
+
+  In classical computers, we can do in-place computation, so we can evaluate $f$ without extra space.
+  
+  \[
+  [a,b] \xrightarrow{\text{AND}} [a, a \land b]
+  \]
+  \[
+  [a,b] \xrightarrow{\text{OR}} [a, a \lor b]
+  \]
+  But in quantum computers, we need to use an extra register to store the output of $f$ to keep it reversible.
+
+  \vspace{0.5cm}
+  We need \textbf{extra space} to achieve same time complexity.
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{What Is Query Complexity?}
+  \begin{itemize}[<+->]
+    \item We want to learn some property of a function $f$
+    \item But we only access $f$ by querying one input at a time
+    \item The main cost is not total gate count
+    \item The main cost is: \textbf{how many times do we query $f$?}
+  \end{itemize}
+
+  \vspace{0.5cm}
+  \only<4->{%
+  \[
+    \text{query complexity} = \# \text{ accesses to } f
+  \]}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Why This Model Is Useful}
+  \begin{itemize}[<+->]
+    \item The black-box model severely restricts what an algorithm can do
+    \item That makes clean lower and upper bounds possible
+    \item If quantum uses significantly fewer queries than classical,
+    \item then we have concrete evidence of a quantum advantage
   \end{itemize}
 \end{frame}
 
-\section{Example Content}
-
 \begin{frame}
-  \frametitle{Example: Key Topics}
-  \begin{block}{Topics in Quantum Algorithms}
-    \begin{itemize}
-      \item Quantum Fourier Transform (QFT)
-      \item Phase Estimation
-      \item Grover Search
-      \item Hamiltonian Simulation
-    \end{itemize}
-  \end{block}
+  \frametitle{Classical Query Model}
+  \begin{itemize}[<+->]
+    \item Classically, a query is straightforward
+    \item We input $x \in \{0,1\}^n$ and receive $f(x)$
+    \item For search, the classical algorithm simply keeps asking:
+  \end{itemize}
+
+  \vspace{0.4cm}
+  
+  \[
+    f(x_1),\ f(x_2),\ f(x_3),\ \dots
+  \]
+
+  \vspace{0.3cm}
+  
+  \textbf{Quantum query algorithms should be compared against this same access model.}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Example: Simple Formula Slide}
-  For example, the Hadamard transform on one qubit:
+  \frametitle{The Standard Quantum Oracle}
+  \begin{itemize}[<+->]
+    \item For a function $f:\{0,1\}^n \to \{0,1\}^m$, the standard oracle is
+  \end{itemize}
+
+  \vspace{0.3cm}
+  \only<1->{%
   \[
-    H\lvert 0 \rangle = \frac{\lvert 0 \rangle+\lvert 1 \rangle}{\sqrt{2}},
-    \qquad
-    H\lvert 1 \rangle = \frac{\lvert 0 \rangle-\lvert 1 \rangle}{\sqrt{2}}.
+    B_f\ket{x}\ket{b} = \ket{x}\ket{b \oplus f(x)}
+  \]}
+
+  \vspace{0.3cm}
+  \begin{itemize}[<+->]
+    \item It computes the function value reversibly
+    \item Input register stays intact
+    \item Output register stores the answer
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{The Oracle}
+  \begin{itemize}[<+->]
+    \item For Boolean functions $f:\{0,1\}^n \to \{0,1\}$, we also use
+  \end{itemize}
+
+  \vspace{0.3cm}
+  \only<1->{%
+  \[
+    O_f\ket{x} = (-1)^{f(x)}\ket{x}
+  \]}
+
+  \vspace{0.3cm}
+  \begin{itemize}[<+->]
+    \item The answer is written into the phase instead of an output register
+    \item This looks different, but it is only marginally different from $B_f$
+    \item In many algorithms, especially Fourier-style ones, the phase form is more natural
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Comparing Two Oracle Models}
+  \small
+  \renewcommand{\arraystretch}{1.2}
+  \centering
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.45cm} >{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}p{3.75cm}@{}}
+    \toprule
+    & \textbf{Standard oracle $B_f$} & \textbf{Phase oracle $O_f$} \\
+    \midrule
+    Action &
+    $\ket{x}\ket{b}\mapsto \ket{x}\ket{b\oplus f(x)}$ &
+    $\ket{x}\mapsto (-1)^{f(x)}\ket{x}$ \\
+    Represent &
+    output register &
+    phase \\
+    Intuition &
+    closer to classical computation &
+    cleaner for interference and Fourier analysis \\
+    Main picture &
+    reversibly computes $f(x)$ &
+    marks inputs by a sign change \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.7cm}
+
+  In fact, $B_f$ and $O_f$ are \textbf{equivalent!}
+  
+  They can simulate each other with only constant overhead.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Two Oracles Are Equivalent}
+  \begin{theorem}[Equivalence of $B_f$ and $O_f$]
+    For any Boolean function $f:\{0,1\}^n \to \{0,1\}$, the standard oracle $B_f$ and the phase oracle $O_f$ can simulate each other with only constant overhead.
+  \end{theorem}
+
+  Proof: easy and straightforward.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Two Oracles Are Equivalent: $B_f$ to $O_f$}
+  \centering
+  \includegraphics[width=0.7\textwidth,height=0.5\textheight,keepaspectratio]{../imgs/stand_to_phase.png}
+  {\small
+  \[
+    \ket{x}\ket{-}
+    \xrightarrow{B_f}
+    \ket{x}\frac{\ket{f(x)}-\ket{1 \oplus f(x)}}{\sqrt{2}}
+    =
+    (-1)^{f(x)}\ket{x}\ket{-}
+    =
+    \bigl(O_f\ket{x}\bigr)\ket{-}.
+  \]
+  }
+  \vspace{0.4cm}
+
+  But we need one extra qubit initialized to $\ket{-}$ (constant overhead).
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Two Oracles Are Equivalent: $O_f$ to $B_f$}
+  \centering
+  {\small
+  \[
+    \ket{x}\ket{b}
+    \xrightarrow{H \text{ on } b}
+    \ket{x}\frac{\ket{0}+(-1)^b\ket{1}}{\sqrt{2}}
+  \]
+  \[
+    \xrightarrow{\mathrm{controlled}\text{-}O_f}
+    \ket{x}\frac{\ket{0}+(-1)^{b\oplus f(x)}\ket{1}}{\sqrt{2}}
+    \xrightarrow{H \text{ on } b}
+    \ket{x}\ket{b\oplus f(x)}.
+  \]
+  }
+
+  \vspace{0.4cm}
+  {\small So one query to a controlled-$O_f$ oracle simulates $B_f$.}
+
+\end{frame}
+
+\section{Fourier sampling problems}
+\subsection{Deutsch-Jozsa}
+
+\begin{frame}
+  \frametitle{Deutsch's algorithm}
+  \centering
+  \includegraphics[width=0.7\textwidth,height=0.5\textheight,keepaspectratio]{../imgs/Deutsch.png}
+
+  \vspace{0.4cm}
+  {\small
+  \[
+    \ket{0}
+    \xrightarrow{H}
+    \frac{\ket{0}+\ket{1}}{\sqrt{2}}
+    \xrightarrow{O_f}
+    \frac{(-1)^{f(0)}\ket{0}+(-1)^{f(1)}\ket{1}}{\sqrt{2}}
+  \]
+  \[
+    =
+    (-1)^{f(0)}
+    \frac{\ket{0}+(-1)^{f(0)\oplus f(1)}\ket{1}}{\sqrt{2}}
+    \xrightarrow{H}
+    (-1)^{f(0)}\ket{f(0)\oplus f(1)}.
+  \]
+  }
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Deutsch-Jozsa problem}
+  \begin{definition}[Deutsch-Jozsa problem]
+    Let $f:\{0,1\}^n \to \{0,1\}$.
+
+    \vspace{0.4em}
+    \textbf{Promise:} $f$ is either
+    \begin{itemize}
+      \item \textbf{Constant:} $f(x)=f(y)$ for all $x,y\in\{0,1\}^n$
+      \item \textbf{Balanced:} $\lvert \{x \mid f(x)=1\} \rvert = 2^{n-1}$
+    \end{itemize}
+
+    \textbf{Goal:} Determine whether $f$ is constant or balanced.
+  \end{definition}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Deutsch-Jozsa algorithm}
+  \centering
+  \includegraphics[width=0.72\textwidth,height=0.42\textheight,keepaspectratio]{../imgs/Deutsch-Jozsa.png}
+
+  \vspace{0.5cm}
+  \begin{itemize}[<+->]
+    \item The circuit is essentially the same as Deutsch's algorithm
+    \item Apply $H^{\otimes n}$, then $O_f$, then $H^{\otimes n}$
+    \item Quantum query cost: just \textbf{one} call to the oracle
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Deutsch-Jozsa: State Evolution}
+  \[
+    \ket{0^n}
+    \xrightarrow{H^{\otimes n}}
+    \frac{1}{\sqrt{2^n}}\sum_{x\in\{0,1\}^n}\ket{x}
   \]
 
-  \vspace{0.6em}
-  This template is ready to be extended with your seminar materials. ~\cite{nielsen2010quantum}
+  \[
+    \xrightarrow{O_f}
+    \frac{1}{\sqrt{2^n}}\sum_{x\in\{0,1\}^n}(-1)^{f(x)}\ket{x}
+  \]
+
+  \[
+    \xrightarrow{H^{\otimes n}}
+    \frac{1}{2^n}\sum_{x,y\in\{0,1\}^n}(-1)^{f(x)+x\cdot y}\ket{y}
+  \]
+
+  \vspace{0.3cm}
+  {\small Here $x\cdot y=\sum_{i=1}^n x_i y_i$, and}
+  \[
+    H^{\otimes n}\ket{x}
+    =
+    \frac{1}{\sqrt{2^n}}\sum_{y\in\{0,1\}^n}(-1)^{x\cdot y}\ket{y}.
+  \]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Deutsch-Jozsa: Measurement}
+  \begin{itemize}[<+->]
+    \item Look at the amplitude on $\ket{0^n}$
+  \end{itemize}
+
+  \vspace{0.2cm}
+  \[
+    \frac{1}{2^n}\sum_{x\in\{0,1\}^n}(-1)^{f(x)}
+  \]
+
+  \begin{itemize}[<+->]
+    \item If $f$ is constant, this becomes $(-1)^{f(0^n)}$, so we measure $\ket{0^n}$ with probability $1$
+    \item If $f$ is balanced, half the terms are $+1$ and half are $-1$, so the amplitude is $0$
+  \end{itemize}
+
+  \vspace{0.4cm}
+  \textbf<3->{Measure $\ket{0^n}$: constant. Measure anything else: balanced.}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Bernstein-Vazirani problem}
+  \begin{definition}[Bernstein-Vazirani problem]
+    Let $f:\{0,1\}^n \to \{0,1\}$.
+
+    \vspace{0.4em}
+    \textbf{Promise:} $f$ is linear:
+    \[
+      f(x)=x\cdot s
+    \]
+    for some secret string $s\in\{0,1\}^n$.
+
+    \textbf{Goal:} Find $s$.
+  \end{definition}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Bernstein-Vazirani algorithm}
+  \begin{itemize}[<+->]
+    \item Classically, we need $n$ queries
+    \item Querying $e_i$ reveals the $i$th bit of $s$
+    \item Quantumly, the circuit is again the Deutsch-Jozsa circuit
+  \end{itemize}
+
+  \vspace{0.4cm}
+  \only<3->{\includegraphics[width=0.72\textwidth,height=0.42\textheight,keepaspectratio]{../imgs/Deutsch-Jozsa.png}}
+
+
+  \vspace{0.3cm}
+  \textbf<3->{Same circuit, different promise, different conclusion.}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Bernstein-Vazirani: Output}
+  \[
+    \frac{1}{2^n}\sum_{x,y\in\{0,1\}^n}(-1)^{f(x)+x\cdot y}\ket{y}
+    =
+    \frac{1}{2^n}\sum_{x,y\in\{0,1\}^n}(-1)^{x\cdot(s\oplus y)}\ket{y}
+  \]
+
+  \vspace{0.3cm}
+
+  \begin{itemize}[<+->]
+    \item If $y=s$, every phase is $1$
+    \item So the amplitude on $\ket{s}$ is exactly $1$
+    \item Therefore, the measurement returns $\ket{s}$ with probability $1$
+  \end{itemize}
+
+  \vspace{0.4cm}
+  \textbf<3->{Quantum: 1 query. Classical: $n$ queries.}
+\end{frame}
+
+\section{Total Problems and Search}
+
+\begin{frame}
+  \frametitle{What Have We Seen So Far?}
+  \begin{itemize}[<+->]
+    \item Deutsch-Jozsa gives a dramatic quantum-classical separation
+    \item Bernstein-Vazirani gives a clean $1$ vs. $n$ separation
+    \item These examples make quantum query algorithms look extremely powerful
+  \end{itemize}
+
+  \vspace{0.5cm}
+  \textbf<3->{But there is a catch: both are promise problems.}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Promise Problems vs Total Problems}
+  \begin{itemize}[<+->]
+    \item In a promise problem, the input is guaranteed to have special structure
+    \item Our algorithm is only judged on inputs satisfying that promise
+    \item In a total problem, the problem must be defined on all possible inputs
+    \item Once we move to total functions, the landscape changes dramatically
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{A Limitation for Total Functions}
+  \begin{theorem}[Aaronson et al.~\cite{aaronson2020huang}]
+    For a total function $f$,
+    \[
+      D(f) \le Q(f)^4.
+    \]
+  \end{theorem}
+
+  \vspace{0.5cm}
+
+  {\small
+  Here, $D(f)$ denotes deterministic classical query complexity, and $Q(f)$ denotes quantum query complexity.
+  }
+
+  \vspace{0.4cm}
+
+  \begin{itemize}
+    \item So total functions cannot exhibit exponential quantum speedups
+    \item At best, the separation is polynomial (quaratic)
+    \item The huge gaps we saw earlier rely on structure in the input promise
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Back to the Grover Search}
+  \begin{itemize}[<+->]
+    \item Grover solves unstructured search
+    \item Classical query complexity is $\Theta(2^n)$
+    \item Quantum query complexity is $O(\sqrt{2^n})$
+    \item So Grover gives a quadratic speedup
+  \end{itemize}
+
+  \vspace{0.5cm}
+  \textbf<4->{But if quartic is the maximum for total functions, is quadratic really the end of the story?}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{BBBV Lower Bound}
+  \begin{itemize}[<+->]
+    \item Theorem 3.3 still leaves open the possibility of something like $O(2^{n/4})$
+    \item Unfortunately, that is not possible.
+  \end{itemize}
+
+  \vspace{0.4cm}
+
+  \begin{theorem}[Bennett et al.~\cite{bennett1997strengths}]
+    The quantum query complexity of unstructured search is
+    \[
+      \Omega(\sqrt{2^n}).
+    \]
+  \end{theorem}
+
+  % add little thinking_face png here
+  \begin{center}
+    \includegraphics[width=0.2\textwidth,height=0.1\textheight,keepaspectratio]{../../assets/thinking_face.png}
+  \end{center}
+  \textbf<2->{let's prove it!}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Proof for the BBBV Lower Bound}
+  \begin{itemize}[<+->]
+    \item Compare two cases:
+      the all-zero function and a function with exactly one marked input
+    \item If a quantum algorithm makes only a few queries,
+      it cannot noticeably distinguish those two cases
+    \item Therefore, it cannot solve search with high success probability
+  \end{itemize}
+
+  \vspace{0.5cm}
+  \only<3->{%
+  \[
+    U_T O_f U_{T-1}\cdots O_f U_1 O_f U_0\ket{0^n}
+  \]}
+
+  \vspace{0.3cm}
+  {\small \only<3->{A $T$-query algorithm is just a sequence of fixed unitaries alternating with oracle calls.}}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Step 1: Find an Input the Algorithm Barely Touches}
+  \[
+    \ket{\psi_t}
+    :=
+    U_t U_{t-1}\cdots U_1 U_0\ket{0^n}
+    =
+    \sum_{x\in\{0,1\}^n}\alpha_{x,t}\ket{x}
+  \]
+
+  \[
+    m_x := \sum_{t=0}^{T-1} |\alpha_{x,t}|^2
+  \]
+
+  \begin{itemize}[<+->]
+    \item $m_x$ measures how much total amplitude the algorithm places on input $x$
+    \item Since
+      \[
+        \sum_x m_x = T,
+      \]
+      there exists some $y$ with
+      \[
+        m_y \le \frac{T}{2^n}
+      \]
+    \item So at least one input is barely examined
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Step 2: Build Hybrid Oracles}
+  Let $f$ be the function that is $1$ only on $y$ and $0$ elsewhere.
+
+  \vspace{0.4cm}
+
+  \begin{itemize}[<+->]
+    \item Define $O^{(t)}$ so that the first $t$ queries are identity
+    \item The remaining $T-t$ queries use the real oracle $O_f$
+  \end{itemize}
+
+  \vspace{0.4cm}
+  \only<2->{%
+  \[
+    \ket{\phi^{(t)}} :=
+    U_T O^{(t)} U_{T-1}\cdots O^{(t)} U_1 O^{(t)} U_0\ket{0^n}
+  \]}
+
+  \vspace{0.3cm}
+  {\small \only<2->{%
+  $\ket{\phi^{(T)}}$ is the final state for the all-zero function, and
+  $\ket{\phi^{(0)}}$ is the final state for the function with one marked item.
+  }}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Step 3: Consecutive Hybrids Stay Close}
+  \[
+    \|\ket{\phi^{(t+1)}}-\ket{\phi^{(t)}}\|
+    =
+    \|\ket{\psi_t}-O_f\ket{\psi_t}\|
+    =
+    2|\alpha_{y,t}|
+  \]
+
+  \begin{itemize}[<+->]
+    \item Each hybrid step changes the state only through the amplitude sitting on $y$
+    \item But $y$ was chosen so that the algorithm barely touches it
+    \item Using Cauchy-Schwarz,
+      \[
+        \sum_{t=0}^{T-1} |\alpha_{y,t}| \le \frac{T}{\sqrt{2^n}}
+      \]
+    \item Therefore,
+      \[
+        \|\ket{\phi^{(T)}}-\ket{\phi^{(0)}}\|
+        \le \frac{2T}{\sqrt{2^n}}
+      \]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Step 4: Close States Are Hard to Distinguish}
+  \begin{observation}
+    If two quantum states are close in Euclidean norm, then their measurement distributions are also close.
+  \end{observation}
+
+  \vspace{0.4cm}
+
+  \[
+    \mathrm{TV}(p,q)
+    =
+    \frac{1}{2}\|p-q\|_1
+  \]
+
+  \begin{itemize}[<+->]
+    \item Here $\mathrm{TV}(p,q)$ is total variation distance
+    \item Small total variation means no measurement can reliably tell the two cases apart
+    \item So if
+      \[
+        \|\ket{\phi^{(T)}}-\ket{\phi^{(0)}}\|
+        \ll 1,
+      \]
+      then the algorithm fails to distinguish “no marked item” from “one marked item”
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Conclusion of BBBV}
+  \[
+    \Pr[\text{distinguish correctly}]
+    \le
+    \frac{1}{2} + \frac{2T}{\sqrt{2^n}}
+  \]
+
+  \begin{itemize}[<+->]
+    \item To succeed with constant bias above $1/2$, we need
+      \[
+        T = \Omega(2^{n/2})
+      \]
+    \item So unstructured search requires
+      \[
+        \Omega(\sqrt{2^n})
+      \]
+      quantum queries
+  \end{itemize}
+
+  \vspace{0.5cm}
+  \textbf<2->{That is exactly the scale achieved by Grover's algorithm.}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Why Grover Matters}
+  \begin{itemize}[<+->]
+    \item Grover achieves $O(\sqrt{2^n})$ queries
+    \item BBBV proves that $\Omega(\sqrt{2^n})$ queries are necessary
+    \item So Grover is not just fast
+    \item It is asymptotically optimal in the query model
+  \end{itemize}
+
+  \vspace{0.5cm}
+  \textbf<4->{That is why Grover is the central search algorithm, not just a nice example.}
 \end{frame}
 
 \section{References}
 
 \begin{frame}[allowframebreaks]{References}
+  \nocite{*}
   \bibliographystyle{alpha}
   \bibliography{citation}
 \end{frame}
