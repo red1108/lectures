@@ -67,7 +67,7 @@
 \subtitle{Lecture 3}
 \author[Mingyu Lee]{Mingyu Lee\\{\small Seoul National University}}
 \institute{\small red1108@snu.ac.kr\\+82 010-2857-3320 (only text) / +01 530-760-8690}
-\date[2026.04.17(FRI) 16:30 KST]{2026.04.17(FRI) 16:30 KST}
+\date[2026.04.24(FRI) 16:30 KST]{2026.04.24(FRI) 16:30 KST}
 
 \AtBeginSection[]
 {
@@ -123,22 +123,26 @@
 
 \begin{frame}
   \frametitle{Grover Recap}
-  \begin{itemize}[<+->]
+  \begin{itemize}
     \item Given $f:\{0,1\}^n \to \{0,1\}$ and the promise that at least one $x$ satisfies $f(x)=1$
     \item Grover finds such $x$ in $O(\sqrt{N})$ queries, where $N=2^n$
     \item Classically we need $\Theta(N)$, and BBBV shows $\sqrt{N}$ is optimal
   \end{itemize}
 
   \vspace{0.5cm}
-  \only<4->{\textbf{But ``marked or not'' is a yes/no question.}}
+  \textbf{Now, instead of ``marked or not'', let's learn an algorithm that finds the min/max!}
+\end{frame}
 
-  \vspace{0.2cm}
-  \only<5->{In practice we usually want the \textbf{best} item, not just any marked one.}
+\begin{frame}
+  \frametitle{Finding the Minimum}
+  \begin{center}
+    \includegraphics[width=\textwidth,keepaspectratio]{imgs/min_intro.png}
+  \end{center}
 \end{frame}
 
 \begin{frame}
   \frametitle{From Search to Optimization}
-  \begin{itemize}[<+->]
+  \begin{itemize}
     \item Problem: given values $T[0],\dots,T[N-1]$, find
       \[
         y^* = \arg\min_{0 \le y \le N-1} T[y]
@@ -148,74 +152,90 @@
   \end{itemize}
 
   \vspace{0.5cm}
-  \only<4->{\textbf{Yes.} D\"urr and H\o yer (1996) gave a surprisingly short algorithm\,\cite{durr1996minimum}.}
+  \textbf{Yes.} D\"urr and H\o yer (1996) gave a surprisingly short algorithm\,\cite{durr1996minimum}.
+
+  \vspace{0.3cm}
+  The paper is only \textbf{2 pages long}.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Today's Algorithm}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth,height=0.78\textheight,keepaspectratio]{imgs/algo1_abstract.png}
+  \end{center}
+
+  \vspace{-0.2cm}
+  \begin{center}
+    \textbf{This is what we will learn today.}
+  \end{center}
 \end{frame}
 
 \begin{frame}
   \frametitle{Why Min Finding Matters}
-  \begin{itemize}[<+->]
+  \begin{itemize}
     \item It is one of the simplest non-trivial quantum building blocks
     \item Appears as a subroutine in many algorithms:
     \begin{itemize}
       \item $k$-nearest neighbor
       \item clustering, classification
       \item shortest path, MST on graphs
-      \item bounded-error optimization
     \end{itemize}
-    \item Same framework yields $\max$, $k$-min, $k$-max
   \end{itemize}
 
   \vspace{0.5cm}
-  \only<4->{\textbf{It is Grover with a moving target.}}
+  \textbf{It is a simple application of Grover.}
 \end{frame}
 
 \section{Quantum Exponential Searching}
 
 \begin{frame}
-  \frametitle{Why a Detour Through BBHT}
-  \begin{itemize}[<+->]
-    \item Min finding will repeatedly call Grover on a shrinking marked set
-    \item But the count of marked items $t$ \textbf{changes every round} and we never know it in advance
-    \item Plain Grover with the wrong $t$ wastes iterations or even \emph{misses} the solution entirely
-    \item We need a Grover wrapper that succeeds in $O(\sqrt{N/t})$ \textbf{without knowing $t$}
+  \frametitle{Why Use Exponential Searching?}
+  Recall how Grover works.
+
+  \vspace{0.4cm}
+  \begin{itemize}
+    \item To find a marked item with high probability, we apply near $\left\lfloor \tfrac{\pi}{4}\sqrt{N/t}\, \right\rfloor$ Grover iterations, where $t$ is the number of marked items.
+    \item Grover assumes we \textbf{know $t$ in advance}.
   \end{itemize}
 
   \vspace{0.5cm}
-  \only<5->{\textbf{Boyer--Brassard--H\o yer--Tapp (1996/1998) gave exactly that.}\,\cite{boyer1998tight}}
+  \textbf{So we would first have to estimate $t$ with quantum counting (runs in $O(\sqrt{N})$, lecture 2) and then feed it into Grover.}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Two Ways to Handle Unknown $t$}
+  There are two ways to run Grover without knowing $t$.
+
+  \vspace{0.5cm}
+  \begin{itemize}
+    \item \textbf{Counting + Grover}: first guess $t$ with quantum counting, then run Grover.
+    \item \textbf{Exponential searching}: works without knowing $t$.
+  \end{itemize}
+
+  \vspace{0.5cm}
+  Both take the same time, $O(\sqrt{N/t})$ per call.
+
+  \vspace{0.5cm}
+  \textbf{Exponential searching is simpler. That is why most people use it as the subroutine.}
 \end{frame}
 
 \begin{frame}
   \frametitle{Grover when $t$ Is Known}
-  Split the basis into marked set $A$ and unmarked set $B$, $|A| = t$:
-  \[
-    \ket{\Psi(k,\ell)} = \sum_{i\in A}k\ket{i} + \sum_{i\in B}\ell\ket{i}
-  \]
-
-  \vspace{0.3cm}
-  Define $\sin^2\theta = t/N$. After $j$ Grover iterations:
-  \[
-    k_j = \tfrac{1}{\sqrt{t}}\sin((2j+1)\theta), \quad
-    \ell_j = \tfrac{1}{\sqrt{N-t}}\cos((2j+1)\theta)
-  \]
-
-  \vspace{0.3cm}
-  \begin{itemize}[<+->]
-    \item Success probability after $j$ iterations: $tk_j^2 = \sin^2((2j+1)\theta)$
-    \item Maximum at $\tilde m = (\pi - 2\theta)/(4\theta)$
-    \item Take $m = \lfloor \pi/(4\theta)\rfloor \approx \tfrac{\pi}{4}\sqrt{N/t}$; failure prob $\le t/N$
-  \end{itemize}
+  \begin{center}
+    \includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{imgs/when_t_is_known.png}
+  \end{center}
 \end{frame}
 
 \begin{frame}
   \frametitle{The Catch: $t$ Unknown}
-  \begin{itemize}[<+->]
+  \begin{itemize}
     \item If we just use $m \approx \tfrac{\pi}{4}\sqrt{N}$ (good for $t=1$), the success probability is \textbf{not} monotone in $j$
     \item For $N = 2^{20}$ and $t = 1$, $m = 804$ iterations succeed almost certainly
     \item The same $804$ iterations on $t = 4$ succeed with probability $< 10^{-6}$
   \end{itemize}
 
   \vspace{0.5cm}
-  \only<4->{\textbf{Wrong $t$ does not just slow you down. It can flatten amplitude on the wrong target.}}
+  \textbf{The wrong $t$ drastically affects the success probability.}
 \end{frame}
 
 \begin{frame}
@@ -224,11 +244,11 @@
 
   \vspace{0.4cm}
   \begin{lemma}[BBHT, Lemma 2]
-    Let $\sin^2\theta = t/N$ and pick $j$ uniform in $\{0, \dots, m-1\}$. Apply $j$ Grover iterations and measure. Then
+    Let $\sin^2\theta = t/N$ (unknown) and pick $j$ uniform in $\{0, \dots, m-1\}$. Apply $j$ Grover iterations and measure. Then
     \[
       P_m \;=\; \tfrac{1}{2} \;-\; \frac{\sin(4m\theta)}{4m\sin(2\theta)}.
     \]
-    In particular, if $m \ge 1/\sin(2\theta)$, then $P_m \ge 1/4$.
+    \textcolor{red}{\textbf{In particular, if $\boldsymbol{m \ge 1/\sin(2\theta)}$, then $\boldsymbol{P_m \ge 1/4}$.}}
   \end{lemma}
 
   \vspace{0.4cm}
@@ -236,26 +256,34 @@
 \end{frame}
 
 \begin{frame}
+  \frametitle{Lemma 1: Visual}
+  \begin{center}
+    \includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{imgs/lemma1_explain.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}
   \frametitle{The BBHT Exponential Searching Algorithm}
-  Inputs: oracle $f$, no knowledge of $t$.
+  Inputs: oracle $f$, no knowledge of $t$. Choose any $\lambda \in (1, 4/3)$.
 
   \vspace{0.3cm}
   \begin{enumerate}
-    \item Set $m = 1$, $\lambda = 6/5$ \quad{\small (any $\lambda \in (1, 4/3)$ works)}
+    \item Set $m \leftarrow 1$
     \item Pick $j$ uniformly at random in $\{0, \dots, m-1\}$
     \item Apply $j$ Grover iterations to the equal superposition; measure $i$
     \item If $f(i) = 1$, return $i$
-    \item Else set $m \leftarrow \min(\lambda m, \sqrt{N})$ and go to step 2
+    \item Else set $m \leftarrow \min(\lceil \lambda m \rceil, \sqrt{N})$ and go to step 2
   \end{enumerate}
 
   \vspace{0.4cm}
-  \only<2->{\textbf{Geometric growth in $m$ until the window covers the right scale $1/\sin(2\theta)$.}}
+  \textbf{The window $m$ grows by a factor of $\lambda$ until it covers the critical scale
+  $m_0 = 1/\sin(2\theta) \approx \tfrac{1}{2}\sqrt{N/t}$, where every round succeeds with probability $\ge 1/4$.}
 \end{frame}
 
 \begin{frame}
   \frametitle{BBHT Runtime}
   \begin{theorem}[BBHT, Theorem 3]
-    For any $1 \le t \le 3N/4$, the algorithm finds a marked item in expected
+    For any $1 \le t \le 3N/4$, the algorithm returns a marked item in expected
     \[
       O\!\left(\sqrt{N/t}\right)
     \]
@@ -263,25 +291,63 @@
   \end{theorem}
 
   \vspace{0.4cm}
-  Concretely: at most $\tfrac{9}{2}\sqrt{N/t}$ expected iterations.
+  Let $m_0 = 1/\sin(2\theta)$. Each round in round $s$ uses $m = \lceil \lambda^{s-1} \rceil$ as its window and costs $\tfrac{m}{2}$ Grover iterations on average.
 
-  \vspace{0.4cm}
-  \begin{itemize}[<+->]
-    \item Phase 1 (\emph{ramp-up}): $m$ doubles past $m_0 = 1/\sin(2\theta) < \sqrt{N/t}$, costing $\le 3 m_0$
-    \item Phase 2 (\emph{critical stage}): each round succeeds with prob.\ $\ge 1/4$, geometric tail $\le \tfrac{3}{2} m_0$
+  \vspace{0.3cm}
+  \begin{itemize}
+    \item \textbf{Phase 1 (ramp-up)}: $m$ grows by factor $\lambda$ until $m \ge m_0$.
+      Geometric sum gives total cost
+      $\;\le\; \dfrac{1}{2}\cdot\dfrac{\lambda}{\lambda - 1}\, m_0$
+    \item \textbf{Phase 2 (critical stage)}: each round succeeds with prob.\ $\ge 1/4$.
+      The dominant (last) round has cost
+      $\;\le\; \dfrac{\lambda}{8 - 6\lambda}\, m_0$
   \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{What About $t = 0$?}
-  \begin{itemize}[<+->]
-    \item If no item is marked, the algorithm runs forever
-    \item So in any application we wrap it with a \textbf{time-out} of $c\sqrt{N}$
-    \item Time-out lets us declare ``no marked item'' with arbitrarily small error
-  \end{itemize}
+  \frametitle{Plugging in $\lambda$}
+  Adding the two phases,
+  \[
+    (\text{expected iterations}) \;\le\; C(\lambda)\, m_0,
+    \qquad
+    C(\lambda) \;=\; \frac{1}{2}\cdot\frac{\lambda}{\lambda - 1} \;+\; \frac{\lambda}{8 - 6\lambda}.
+  \]
 
   \vspace{0.5cm}
-  \only<4->{\textbf{This is exactly how D\"urr--H\o yer detects ``$y$ is already the minimum''.}}
+
+  Now, substitute $C(6/5) = \frac{9}{2}$.
+
+  \vspace{0.5cm}
+  Using $m_0 \le \sqrt{N/t}$ (valid for $1 \le t \le 3N/4$):
+
+  \vspace{0.3cm}
+  \textbf{The algorithm uses at most $\tfrac{9}{2}m_0 \le \tfrac{9}{2}\sqrt{N/t}$ Grover iterations in expectation, with no prior knowledge of $t$.}
+\end{frame}
+
+\begin{frame}
+  \frametitle{$C(\lambda)$ over $(1, 4/3)$}
+  \begin{center}
+    \includegraphics[width=\textwidth,height=0.7\textheight,keepaspectratio]{imgs/lambda_desmos.png}
+  \end{center}
+
+  \vspace{0.2cm}
+  \begin{center}
+    \textbf{We need at most $\tfrac{9}{2} m_0 \le \tfrac{9}{2}\sqrt{N/t}$ Grover iterations.}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{What About $t = 0$?}
+  \begin{itemize}
+    \item If no item is marked, step 4 never fires --- the algorithm never terminates by itself.
+    \item Step 5 caps the window at $m = \sqrt{N}$, so the ramp-up gets stuck there. After that, every loop pass simply runs at the maximum window size.
+    \item At $m = \sqrt{N}$, \emph{if} there were even one marked item ($t \ge 1$), each pass would still find it with probability $\ge 1/4$.
+    \item So we wrap the algorithm in a \textbf{time-out}: run a constant number $r$ of passes at $m = \sqrt{N}$. If none returns a marked item, declare ``$t = 0$''.
+    \item The false-negative probability is at most $(3/4)^r$ --- exponentially small in $r$.
+  \end{itemize}
+
+  \vspace{0.4cm}
+  \textbf{This is exactly how D\"urr--H\o yer detects ``$y$ is already the minimum''.}
 \end{frame}
 
 \begin{frame}
@@ -290,16 +356,16 @@
 
   \vspace{0.4cm}
   \begin{block}{$\textsc{ExpSearch}(f)$}
-    Input: oracle $f$ on $\{0,\dots,N-1\}$ with $t$ marked items.\\[0.3em]
+    Input: oracle $f$ on $\{0,\dots,N-1\}$ with $t \ge 1$ marked items.\\[0.3em]
     Output: a uniformly random marked index.\\[0.3em]
-    Cost: $\tfrac{9}{2}\sqrt{N/t}$ expected queries when $t \ge 1$.
+    Cost: $\tfrac{9}{2}\sqrt{N/t}$ expected Grover iterations.
   \end{block}
 
   \vspace{0.5cm}
-  \only<2->{\textbf{Two facts we will use:}}
+  \textbf{Two facts we will use:}
   \begin{itemize}
-    \item<2-> uniform output among marked items
-    \item<2-> cost depends only on the current $t$, not on past calls
+    \item output is uniform over marked items
+    \item each call is independent; cost depends only on the current $t$
   \end{itemize}
 \end{frame}
 
@@ -361,7 +427,7 @@
 \begin{frame}
   \frametitle{Visualizing the Threshold Descent}
   \begin{center}
-    \includegraphics[width=0.95\textwidth,height=0.65\textheight,keepaspectratio]{../imgs/lec3_algo1_abstract.png}
+    \includegraphics[width=0.95\textwidth,height=0.65\textheight,keepaspectratio]{imgs/algo1_abstract.png}
   \end{center}
 
   \vspace{0.2cm}
@@ -533,7 +599,7 @@
 \begin{frame}
   \frametitle{Quick check}
   \begin{center}
-    \includegraphics[width=0.8\textwidth,height=0.6\textheight,keepaspectratio]{../imgs/survey_1.png}
+    \includegraphics[width=0.8\textwidth,height=0.6\textheight,keepaspectratio]{imgs/survey_1.png}
   \end{center}
 
   Any issues with Lemma~1 or the runtime bound before we go to $k$-minima?
@@ -701,7 +767,7 @@
 \begin{frame}
   \frametitle{Quiz time!}
   \begin{center}
-    \includegraphics[width=0.8\textwidth,height=0.6\textheight,keepaspectratio]{../imgs/survey_1.png}
+    \includegraphics[width=0.8\textwidth,height=0.6\textheight,keepaspectratio]{imgs/survey_1.png}
   \end{center}
 \end{frame}
 

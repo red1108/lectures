@@ -105,20 +105,27 @@ if ! command -v "$engine" >/dev/null 2>&1; then
   exit 1
 fi
 
-"$engine" -synctex=1 -interaction=nonstopmode -file-line-error -output-directory="$out_dir" "$root_name"
+final_status=0
+run_engine() {
+  "$engine" -synctex=1 -interaction=nonstopmode -file-line-error -output-directory="$out_dir" "$root_name" || final_status=$?
+}
+
+run_engine
 
 if [[ -f "$aux_file" ]] && grep -q '^\\bibdata{' "$aux_file" && grep -q '^\\citation{' "$aux_file"; then
   (
     cd "$root_dir"
     bibtex "builds/$root_base"
-  )
+  ) || final_status=$?
 fi
 
-"$engine" -synctex=1 -interaction=nonstopmode -file-line-error -output-directory="$out_dir" "$root_name"
-"$engine" -synctex=1 -interaction=nonstopmode -file-line-error -output-directory="$out_dir" "$root_name"
+run_engine
+run_engine
 
 if [[ -f "$build_pdf" ]]; then
   cp "$build_pdf" "$final_pdf"
 fi
 
 cleanup_root_artifacts "$root_base"
+
+exit "$final_status"
