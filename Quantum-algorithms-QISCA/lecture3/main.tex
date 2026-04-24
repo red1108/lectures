@@ -86,32 +86,24 @@
   Week 3. Thanks for coming back!
 
   \vspace{0.8em}
-  Last two weeks we built up the query model and Grover.\\
-  This week we take Grover to its first real application:
-
-  \vspace{0.8em}
-  \textbf{Finding the minimum of an unsorted list.}
-
-  \vspace{0.8em}
-  All slides remain on GitHub: \url{https://github.com/red1108/lectures}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Today's Plan}
+  Last two weeks we studied about \\
+  
   \begin{itemize}
-    \item From ``is there a marked item?'' to ``what is the best item?''
-    \item Quantum exponential searching (BBHT): Grover when $t$ is unknown
+    \item Quantum Amplitude Amplification
+    \item Quantum Amplitude Estimation
+    \item Quantum Counting
+  \end{itemize}
+
+  This week we will see more practical applications of these primitives.
+  \vspace{0.8em}
+  \begin{itemize}
+    \item Exponential searching (BBHT): Grover when $t$ is unknown
     \item D\"urr--H\o yer minimum-finding algorithm, $O(\sqrt{N})$
-    \item Analysis: rank probability, expected runtime, success probability
     \item Extension: find $k$ smallest items in $O(\sqrt{kN})$
-    \item A cleaner reformulation by Miyamoto, Iwamura, Kise (2019)
   \end{itemize}
 
   \vspace{0.8em}
-  {\large \textbf{Takeaway}}
-  \vspace{0.3em}
-
-  Grover is not only a search primitive; with the right oracle design it becomes an optimization primitive.
+  All slides remain on GitHub: \url{https://github.com/red1108/lectures}
 \end{frame}
 
 \begin{frame}
@@ -231,7 +223,7 @@
   \begin{itemize}
     \item If we just use $m \approx \tfrac{\pi}{4}\sqrt{N}$ (good for $t=1$), the success probability is \textbf{not} monotone in $j$
     \item For $N = 2^{20}$ and $t = 1$, $m = 804$ iterations succeed almost certainly
-    \item The same $804$ iterations on $t = 4$ succeed with probability $< 10^{-6}$
+    \item For $N = 2^{20}$ and $t = 4$, $m = 804$ iterations succeed with probability $< 10^{-6}$
   \end{itemize}
 
   \vspace{0.5cm}
@@ -339,15 +331,13 @@
 \begin{frame}
   \frametitle{What About $t = 0$?}
   \begin{itemize}
-    \item If no item is marked, step 4 never fires --- the algorithm never terminates by itself.
-    \item Step 5 caps the window at $m = \sqrt{N}$, so the ramp-up gets stuck there. After that, every loop pass simply runs at the maximum window size.
-    \item At $m = \sqrt{N}$, \emph{if} there were even one marked item ($t \ge 1$), each pass would still find it with probability $\ge 1/4$.
-    \item So we wrap the algorithm in a \textbf{time-out}: run a constant number $r$ of passes at $m = \sqrt{N}$. If none returns a marked item, declare ``$t = 0$''.
-    \item The false-negative probability is at most $(3/4)^r$ --- exponentially small in $r$.
+    \item If no item is marked, this algorithm never halts.
+    \item The ramp-up gets stuck at $m = \sqrt{N}$.
+    \item At $m = \sqrt{N}$, \emph{if} there were even one marked item ($t \ge 1$), it should find it with probability $\ge 1/4$.
+    \item We can just set the \textbf{time-out} as $r$.
+    \item The false-negative probability is at most $(3/4)^r$.
   \end{itemize}
 
-  \vspace{0.4cm}
-  \textbf{This is exactly how D\"urr--H\o yer detects ``$y$ is already the minimum''.}
 \end{frame}
 
 \begin{frame}
@@ -372,238 +362,26 @@
 \section{The Minimum Finding Algorithm}
 
 \begin{frame}
-  \frametitle{Problem Setup}
-  \begin{definition}[Minimum finding]
-    Let $T[0..N-1]$ be an unsorted table of $N$ items from an ordered set.
+  \frametitle{What We Will Cover}
+  \textbf{Idea:} keep picking any element smaller than the current one.
+  Eventually you land on the minimum.
 
-    \vspace{0.3em}
-    \textbf{Access:} query oracle $\ket{x}\ket{0}\mapsto\ket{x}\ket{T[x]}$.
+  \vspace{0.6cm}
+  Each ``pick a smaller one'' step is one call to $\textsc{ExpSearch}$.
 
-    \vspace{0.3em}
-    \textbf{Goal:} find $y^*$ such that $T[y^*] = \min_x T[x]$.
-  \end{definition}
-
-  \vspace{0.5cm}
-  {\small Assume values are distinct for simplicity; the analysis extends to ties.}
+  \vspace{0.6cm}
+  \textbf{Total cost: $O(\sqrt{N})$ Grover iterations.}
 \end{frame}
 
 \begin{frame}
-  \frametitle{The Threshold Oracle}
-  Given a current ``best-so-far'' index $y$, define
-  \[
-    f_y(x) =
-    \begin{cases}
-      1, & T[x] < T[y] \\
-      0, & T[x] \ge T[y]
-    \end{cases}
-  \]
-
-  \vspace{0.3cm}
-  \begin{itemize}[<+->]
-    \item $f_y$ marks exactly the items \textbf{strictly better} than $y$
-    \item Implemented by one call to $T$ plus a comparator: $O_g(\log N)$ extra gates
-    \item Let $t$ = number of marked items. Then $t$ is the current rank of $y$ minus one
-  \end{itemize}
-
-  \vspace{0.4cm}
-  \only<4->{\textbf{Feed $f_y$ into $\textsc{ExpSearch}$, keep the winner, repeat.}}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Algorithmic Idea}
-  \begin{itemize}[<+->]
-    \item Initialize $y$ at random
-    \item Run $\textsc{ExpSearch}(f_y)$ to get some $y'$ with $T[y'] < T[y]$
-    \item Update $y \leftarrow y'$
-    \item The threshold strictly decreases at each successful round
-    \item Repeat until no item is better than $y$; return $y$
-  \end{itemize}
-
-  \vspace{0.5cm}
-  \only<6->{The number of marked items $t$ shrinks over time,\\
-  so each round becomes ``easier but with fewer targets.''}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Visualizing the Threshold Descent}
+  \frametitle{Covered on the Whiteboard}
+  \vspace{1.5cm}
   \begin{center}
-    \includegraphics[width=0.95\textwidth,height=0.65\textheight,keepaspectratio]{imgs/algo1_abstract.png}
+    {\Large \textbf{This section is covered by handwriting.}}
   \end{center}
-
-  \vspace{0.2cm}
-  {\small The threshold $y$ jumps down to a random marked item at each step, until the set of marked items is empty.}
 \end{frame}
 
-\begin{frame}
-  \frametitle{The D\"urr--H\o yer Algorithm}
-  {\small Output: index $y$ with $T[y]$ minimal, w.h.p.}
-
-  \vspace{0.3em}
-  \begin{enumerate}
-    \item Pick $y \in \{0,\dots,N-1\}$ uniformly at random
-    \item Repeat until total time exceeds
-      \[
-        22.5\sqrt{N} + 1.4 \lg^2 N
-      \]
-    \begin{enumerate}
-      \item Prepare $\tfrac{1}{\sqrt{N}}\sum_j \ket{j}\ket{y}$; mark $j$ iff $T[j] < T[y]$
-      \item $y' \leftarrow \textsc{ExpSearch}(f_y)$
-      \item If $T[y'] < T[y]$, set $y \leftarrow y'$
-    \end{enumerate}
-    \item Return $y$
-  \end{enumerate}
-
-  \vspace{0.4em}
-  {\small Time budget: one Grover iteration = one time step; preparing stage 2(a) costs $\lg N$.}
-\end{frame}
-
-\section{Analysis}
-
-\begin{frame}
-  \frametitle{Analysis Roadmap}
-  \begin{itemize}[<+->]
-    \item Pretend we never time out (``infinite algorithm'')
-    \item Show: item of rank $r$ becomes threshold with probability $1/r$
-    \item Sum contributions $\Rightarrow$ expected runtime is $O(\sqrt{N})$
-    \item Markov $\Rightarrow$ running $2\times$ longer gives success probability $\ge 1/2$
-  \end{itemize}
-
-  \vspace{0.4cm}
-  \only<5->{\textbf{Everything follows from one clean lemma on rank probabilities.}}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Lemma 1: Rank Probability}
-  \begin{lemma}[D\"urr--H\o yer]
-    Let $p(t, r)$ be the probability that the item of rank $r$ ever becomes the threshold, when the infinite algorithm starts with $t$ marked items. Then
-    \[
-      p(t, r) =
-      \begin{cases}
-        1/r, & r \le t \\
-        0, & r > t
-      \end{cases}
-    \]
-  \end{lemma}
-
-  \vspace{0.4cm}
-  \begin{itemize}
-    \item Rank $r$: the $r$-th smallest element
-    \item Remarkably, the probability does not depend on $t$
-    \item Rank 1 (the true minimum) is hit with probability 1
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Proof of Lemma 1}
-  Induction on $t$ for fixed $r$.
-
-  \vspace{0.3cm}
-  \textbf{Base:} $p(r, r) = 1/r$ because AA returns a uniform marked index.
-
-  \vspace{0.3cm}
-  \textbf{Step:} assume $p(k,r) = 1/r$ for all $k \in [r, t]$. With $t+1$ marked items:
-  {\small
-  \[
-    p(t+1, r) = \underbrace{\tfrac{1}{t+1}}_{\text{hit $r$ now}}
-    + \sum_{k=r+1}^{t+1} \tfrac{1}{t+1}\, p(k-1, r)
-  \]
-  \[
-    = \tfrac{1}{t+1} + \tfrac{t+1-r}{t+1}\cdot\tfrac{1}{r}
-    = \tfrac{1}{r}.
-  \]
-  }
-
-  \vspace{0.3cm}
-  {\small Cases where the chosen item has rank $<r$ contribute $0$ (rank $r$ stops being marked).}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Lemma 2: Expected Runtime}
-  \begin{lemma}
-    The expected total time used by the infinite algorithm before $y$ holds the index of the minimum is at most
-    \[
-      m_0 = \tfrac{45}{4}\sqrt{N} + \tfrac{7}{10}\lg^2 N.
-    \]
-  \end{lemma}
-
-  \vspace{0.3cm}
-  Two pieces:
-  \begin{itemize}
-    \item \textbf{AA calls:} $\sum_r p(N,r)\cdot \tfrac{9}{2}\sqrt{N/(r-1)}$
-    \item \textbf{Oracle prep:} $\sum_r p(N,r)\cdot \lg N$
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Proof of Lemma 2 (AA part)}
-  {\small
-  \[
-    \sum_{r=2}^{N} p(N,r)\,\tfrac{9}{2}\sqrt{\tfrac{N}{r-1}}
-    = \tfrac{9}{2}\sqrt{N}\sum_{r=1}^{N-1}\tfrac{1}{r+1}\cdot\tfrac{1}{\sqrt{r}}
-  \]
-  \[
-    \le \tfrac{9}{2}\sqrt{N}\left(\tfrac{1}{2} + \sum_{r=2}^{N-1} r^{-3/2}\right)
-    \le \tfrac{9}{2}\sqrt{N}\left(\tfrac{1}{2} + \int_1^{N-1} r^{-3/2}\,dr\right)
-  \]
-  \[
-    = \tfrac{9}{2}\sqrt{N}\left(\tfrac{1}{2} + \left[-2r^{-1/2}\right]_1^{N-1}\right)
-    \le \tfrac{45}{4}\sqrt{N}.
-  \]
-  }
-
-  \vspace{0.5cm}
-  {\small For oracle prep: $\sum_r p(N,r)\lg N = (H_N - 1)\lg N \le \ln N \lg N \le \tfrac{7}{10}\lg^2 N$.}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Theorem 1: Success Probability}
-  \begin{theorem}[D\"urr--H\o yer \cite{durr1996minimum}]
-    With time-out $2 m_0 = 22.5\sqrt{N} + 1.4\lg^2 N$, the algorithm outputs the index of the minimum with probability at least $1/2$.
-
-    \vspace{0.3em}
-    Its running time is $O(\sqrt{N})$.
-  \end{theorem}
-
-  \vspace{0.5cm}
-  \begin{itemize}[<+->]
-    \item Markov: $\Pr[\text{runtime} > 2 m_0] \le 1/2$
-    \item So with probability $\ge 1/2$ the infinite algorithm has already reached the minimum
-    \item Boosting: run $c$ copies, take the best $\Rightarrow$ error $\le 1/2^c$
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Why This Is Tight}
-  \begin{itemize}[<+->]
-    \item Min finding $\ge$ unstructured search (a marked item is just the minimum of a $0$/$1$ table)
-    \item By BBBV\,\cite{bennett1997strengths}, $\Omega(\sqrt{N})$ queries are required
-    \item So D\"urr--H\o yer is \textbf{asymptotically optimal}
-  \end{itemize}
-
-  \vspace{0.5cm}
-  \only<4->{\textbf{Grover is the lower bound; D\"urr--H\o yer matches it for a strictly harder task.}}
-\end{frame}
-
-\begin{frame}
-  \frametitle{What About the Maximum?}
-  \begin{itemize}[<+->]
-    \item Flip the comparator: $f_y(x) = 1$ iff $T[x] > T[y]$
-    \item Same algorithm, same analysis, same $O(\sqrt{N})$
-    \item Ahuja--Kapoor gave an explicit write-up\,\cite{ahuja1999maximum}
-  \end{itemize}
-
-  \vspace{0.4cm}
-  \only<4->{So we have \textbf{min, max, arg-min, arg-max} all in $O(\sqrt{N})$.}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Quick check}
-  \begin{center}
-    \includegraphics[width=0.8\textwidth,height=0.6\textheight,keepaspectratio]{imgs/survey_1.png}
-  \end{center}
-
-  Any issues with Lemma~1 or the runtime bound before we go to $k$-minima?
-\end{frame}
+% Full slides for this section preserved in min_finding_full.tex (not included)
 
 \section{Finding $k$ Minima}
 
@@ -614,18 +392,32 @@
   \end{definition}
 
   \vspace{0.5cm}
-  \begin{itemize}[<+->]
+  \begin{itemize}
+    \item Naive classical(heap): scan all $N$ items, keep the $k$ smallest $\Rightarrow O(N\log{k})$
+    \item Advanced classical(median of medians, optimal): Worst case $O(N)$. \vspace{0.2cm}
     \item Naive quantum: run D\"urr--H\o yer $k$ times $\Rightarrow O(k\sqrt{N})$
-    \item Classical lower bound: $\Omega(N)$ (must read everything)
-    \item Can we do \textbf{better than $k\sqrt{N}$}?
   \end{itemize}
+  \vspace{0.4cm}
+  Can we do \textbf{better than $k\sqrt{N}$}?
 
   \vspace{0.4cm}
-  \only<4->{\textbf{Yes:} $O(\sqrt{kN})$ is achievable and optimal.}
+
+  \textbf{Yes:} $O(\sqrt{kN})$ is achievable and optimal.
 \end{frame}
 
 \begin{frame}
-  \frametitle{Why $\sqrt{kN}$ Is the Right Scale}
+  \frametitle{The $k$-Minima Problem}
+  \begin{center}
+    \includegraphics[width=\textwidth,height=0.5\textheight,keepaspectratio]{imgs/kminima_origin.png}
+  \end{center}
+
+  \vspace{0.2cm}
+  The first $k$-minima algorithm was proposed in 2006\,\cite{durr2006quantum}, but the paper is 19 pages long... A simpler version appeared in 2019\,\cite{miyamoto2019kminima}.
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{A Well-Known Trick: $\sqrt{kN}$ Scaling}
   Think of finding marked items one by one:
   \[
     \underbrace{\sqrt{N/k}}_{\text{1st}} + \underbrace{\sqrt{N/(k-1)}}_{\text{2nd}} + \cdots + \underbrace{\sqrt{N}}_{k\text{-th}}
@@ -640,129 +432,203 @@
   \]
 
   \vspace{0.3cm}
-  \only<2->{\textbf{Each find gets cheaper as $k$ shrinks; the sum telescopes into $\sqrt{kN}$.}}
+  \textbf{Each find gets cheaper as $k$ shrinks; the sum telescopes into $\sqrt{kN}$.}
 \end{frame}
 
 \begin{frame}
-  \frametitle{D\"urr--Heiligman Approach (2006)}
-  Maintain a set $T$ of $k$ thresholds and an oracle
+  \frametitle{Step 1: Run the Finding-Minimum Algorithm}
+  Run FM and \textbf{record every threshold update along the way}.
+
+  \vspace{0.6cm}
+  \begin{center}
+    {\large
+    $T[y_1] \;>\; T[y_2] \;>\; T[y_3] \;>\; \cdots \;>\; T[y_m]$
+    }
+  \end{center}
+
+  \vspace{0.6cm}
+  \begin{itemize}
+    \item Each $y_i$ is a threshold that FM accepted at some round
+    \item The values are \textbf{strictly decreasing} by construction
+    \item Total length: $m = O(\sqrt{N})$ \quad{\small (the FM expected runtime)}
+  \end{itemize}
+
+  \vspace{0.5cm}
+  \textbf{The chain is essentially a sorted ladder of candidate thresholds.}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Step 2: We Don't Need an Exact Threshold}
+  \textbf{Goal:} find an index $i$ such that
   \[
-    f_T(x) =
-    \begin{cases}
-      1, & T[x] < T[t]\ \text{for some } t \in T \\
-      0, & \text{otherwise}
-    \end{cases}
+    \bigl|\{\,x : T[x] < T[i]\,\}\bigr| \;=\; k.
   \]
 
   \vspace{0.4cm}
-  \begin{itemize}[<+->]
-    \item Initialize $T$ with $k$ random indices
-    \item Loop: find $x$ with $f_T(x)=1$; replace $\arg\max_{t\in T} T[t]$ with $x$
-    \item Greedy swap on the \emph{worst} current threshold\,\cite{durr2006graph}
-    \item Keep $T$ duplicate-free by removing it from the marked set
-  \end{itemize}
-
-  \vspace{0.3cm}
-  \only<5->{Correct analysis is subtle because the oracle is entangled with the whole set $T$.}
-\end{frame}
-
-\begin{frame}
-  \frametitle{A Simpler Reformulation}
-  Miyamoto--Iwamura--Kise (2019) split the task into two clean phases\,\cite{miyamoto2019kminima}.
-
-  \vspace{0.4cm}
-  \begin{itemize}[<+->]
-    \item \textbf{Phase 1:} find a \emph{single} threshold $t_{k'}$ such that
-      \[
-        \bigl|\{x : T[x] < T[t_{k'}]\}\bigr| = k' \ge k
-      \]
-    \item \textbf{Phase 2:} run ``find all marked $k'$ indices'' using that single threshold
-  \end{itemize}
-
-  \vspace{0.5cm}
-  \only<3->{\textbf{No $k$-threshold oracle, no greedy bookkeeping. Just FM + quantum counting + AA.}}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Phase 1: Finding the Good Threshold}
-  \begin{itemize}[<+->]
-    \item Run D\"urr--H\o yer and \textbf{remember} the last $k$ threshold indices $t_1^{\text{FM}}, \dots$
-    \item Counting oracle $h(t) = |\{x : T[x] < T[t]\}|$ by quantum counting, $O(\sqrt{N})$ per query\,\cite{brassard1998counting}
-    \item Binary search on $k$ candidate thresholds: find $i$ with
-      \[
-        h(t^{\text{FM}}_{i+1}) \le k < h(t^{\text{FM}}_i)
-      \]
-    \item Cost: $O(\sqrt{N}\log k)$
-  \end{itemize}
-
-  \vspace{0.4cm}
-  \only<5->{\textbf{FM gives us a geometric sequence of thresholds for free; we only have to count.}}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Phase 2: Find All Marked Indices}
-  Fixed threshold $t_{k'}$. Oracle marks the $k'$ smallest items:
+  But hitting exactly $k$ is unnecessary. It is enough to find $i$ with
   \[
-    f'_{t_{k'}}(x) =
-    \begin{cases}
-      1, & T[x] < T[t_{k'}] \text{ and } x \notin T_{\text{found}} \\
-      0, & \text{otherwise}
-    \end{cases}
+    k \;\le\; k' \;\le\; c \cdot k
+    \qquad \text{for some constant } c.
   \]
 
-  \vspace{0.3cm}
-  \begin{itemize}[<+->]
-    \item After finding $t$ of them, $(k'-t)$ remain marked out of $N$
-    \item $t$-th call to AA: $O(\sqrt{N/(k'-t)})$
-    \item Total: $O(\sqrt{k'N}) = O(\sqrt{kN})$
+  \vspace{0.4cm}
+  \begin{itemize}
+    \item This means O(k') = O(k) is good enough.
+    \item Why? Discuss later.
   \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Putting It Together}
-  \begin{theorem}[Miyamoto--Iwamura--Kise \cite{miyamoto2019kminima}]
-    $k$-minima can be solved with quantum query complexity
-    \[
-      O(\sqrt{N}\log k) + O(\sqrt{kN}) = O(\sqrt{kN}).
-    \]
-  \end{theorem}
+  \frametitle{Binary Search on the Threshold Ladder}
+  Recall the FM ladder: $T[y_1] > T[y_2] > \cdots > T[y_m]$, $m = O(\sqrt{N})$.
 
   \vspace{0.5cm}
-  \begin{itemize}[<+->]
-    \item Same asymptotic as D\"urr--Heiligman
-    \item But the algorithm is modular: FM $\to$ QC $\to$ AA
-    \item Each subroutine is independently analyzed; no joint oracle over $k$ thresholds
+  Two endpoints to anchor the search:
+  \begin{itemize}
+    \item $T[y_m]$ is the \textbf{minimum} \quad $\Rightarrow$ \quad $rank(y_m)-1 = 0$
+    \item $T[y_{m-k}]$ has at least $k$ items below it \quad $\Rightarrow$ \quad $rank(y_{m-k})-1 > k$
+  \end{itemize}
+
+  \vspace{0.5cm}
+  So a good threshold sits somewhere in $\{y_{m-k}, \dots, y_{m}\}$.
+
+  \vspace{0.5cm}
+  \begin{itemize}
+    \item Binary search over these $k$ candidates: $O(\log k)$ steps
+    \item Each step calls quantum counting once: $O(\sqrt{N})$
+    \item \textbf{Total: $O(\sqrt{N}\log k)$ to locate $t_{k'}$.}
   \end{itemize}
 \end{frame}
 
-\section{Applications and Wrap-up}
-
 \begin{frame}
-  \frametitle{Where Min / $k$-Min Show Up}
-  \begin{itemize}[<+->]
-    \item \textbf{$k$-nearest neighbor:} find $k$ closest points to a query under a distance oracle
-    \item \textbf{Clustering:} nearest-centroid assignments, Lloyd-style updates
-    \item \textbf{Graph problems:} minimum-weight edge, single-source shortest path
-    \item \textbf{Optimization inner loops:} any ``pick the best candidate'' step
-  \end{itemize}
+  \frametitle{The Process}
+  \begin{block}{Pseudocode}
+  \begin{flushleft}
+  \ttfamily
+  \textbf{repeat}: \\
+  \quad Run Phase 1 \quad $\rightarrow$ \ candidate threshold $t_{k'}$ \\
+  \quad Estimate $k' = h(t_{k'})$ via quantum counting \\
+  \quad \textbf{if} $k' \le c \cdot k$: \quad \textbf{break} \ (success) \\
+  \quad \textbf{else}: \quad retry \\
+  Run Phase 2 with threshold $t_{k'}$
+  \end{flushleft}
+  \end{block}
 
   \vspace{0.4cm}
-  \only<5->{\textbf{Min finding is a quadratic speedup you can drop into almost any loop.}}
+  \begin{itemize}
+    \item Phase 1 alone may overshoot; quantum counting checks the size
+    \item Each retry is independent, so a constant number suffice w.h.p.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{What to Take Away}
-  \begin{itemize}[<+->]
-    \item Min finding $= $ Grover with a shrinking marked set
-    \item Key design trick: the \textbf{threshold oracle}, not a new amplitude technique
-    \item Clean analysis hinges on a single identity: rank $r$ is hit with probability $1/r$
-    \item $k$-min extends the same idea, and becomes modular once we split threshold-finding from enumeration
-    \item All of this is \textbf{optimal} up to constants
+  \frametitle{Phase 2: Extract All $k'$ Marked Items}
+  We have a threshold $t_{k'}$ with exactly $k'$ items below it.
+
+  \vspace{0.5cm}
+  Pull them out one by one:
+  \begin{itemize}
+    \item Run $\textsc{ExpSearch}(f_{t_{k'}})$ to get one marked index
+    \item Unmark it (remove from the search space)
+    \item Repeat until the marked set is empty
   \end{itemize}
 
   \vspace{0.5cm}
-  \only<6->{\textbf{Next week: quantum analog-digital conversion and the swap test.}}
+  After $k'$ rounds we have collected all $k'$ items.
+
+  \vspace{0.6cm}
+  \textbf{Total query complexity?}
 \end{frame}
+
+\begin{frame}
+  \frametitle{Phase 2: Cost Analysis}
+  Each call to $\textsc{ExpSearch}$ depends on the current marked count:
+  \[
+    \underbrace{\sqrt{N/k'}}_{\text{round 1}} \;+\; \underbrace{\sqrt{N/(k'-1)}}_{\text{round 2}} \;+\; \cdots \;+\; \underbrace{\sqrt{N/1}}_{\text{round } k'}
+  \]
+
+  \vspace{0.4cm}
+  This is exactly the $\sqrt{kN}$ trick from before:
+  \[
+    \sum_{t=1}^{k'} \sqrt{\tfrac{N}{t}} \;=\; O(\sqrt{k'N}).
+  \]
+
+  \vspace{0.4cm}
+  Since $k' = O(k)$ by Phase 1's guarantee:
+  \[
+    O(\sqrt{k'N}) \;=\; O(\sqrt{kN}).
+  \]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Trimming $k'$ Down to $k$}
+  Phase 2 returns $k' \ge k$ items. We only want the smallest $k$.
+
+  \vspace{0.5cm}
+  \begin{itemize}
+    \item Once we have the $k'$ values in classical memory, just sort and pick the smallest $k$
+    \item Worst case: $O(k' \log k')$ classical comparisons
+    \item This is \textbf{classical} work --- not counted in query complexity
+  \end{itemize}
+
+  \vspace{0.5cm}
+  \textbf{The query complexity is set by Phases 1 and 2.}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Final Complexity Analysis}
+  \begin{center}
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Stage} & \textbf{Cost} & \textbf{Source} \\
+    \midrule
+    Phase 1: FM ladder        & $O(\sqrt{N})$        & D\"urr--H\o yer \\
+    Phase 1: binary search    & $O(\sqrt{N}\log k)$  & QC, $\log k$ steps \\
+    Phase 2: extract $k'$     & $O(\sqrt{kN})$       & $\sum_t \sqrt{N/t}$ \\
+    Trim to $k$               & free                 & classical \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{0.6cm}
+  \[
+    O(\sqrt{N}) + O(\sqrt{N}\log k) + O(\sqrt{kN})
+    \;=\; \boxed{\,O(\sqrt{kN})\,}
+  \]
+
+  \vspace{0.4cm}
+  $\sqrt{kN}$ dominates because $\sqrt{k} \ge \log k$ for all $k \ge 1$.
+\end{frame}
+
+% \section{Applications and Wrap-up}
+
+% \begin{frame}
+%   \frametitle{Where Min / $k$-Min Show Up}
+%   \begin{itemize}[<+->]
+%     \item \textbf{$k$-nearest neighbor:} find $k$ closest points to a query under a distance oracle
+%     \item \textbf{Clustering:} nearest-centroid assignments, Lloyd-style updates
+%     \item \textbf{Graph problems:} minimum-weight edge, single-source shortest path
+%     \item \textbf{Optimization inner loops:} any ``pick the best candidate'' step
+%   \end{itemize}
+
+%   \vspace{0.4cm}
+%   \only<5->{\textbf{Min finding is a quadratic speedup you can drop into almost any loop.}}
+% \end{frame}
+
+% \begin{frame}
+%   \frametitle{What to Take Away}
+%   \begin{itemize}[<+->]
+%     \item Min finding $= $ Grover with a shrinking marked set
+%     \item Key design trick: the \textbf{threshold oracle}, not a new amplitude technique
+%     \item Clean analysis hinges on a single identity: rank $r$ is hit with probability $1/r$
+%     \item $k$-min extends the same idea, and becomes modular once we split threshold-finding from enumeration
+%     \item All of this is \textbf{optimal} up to constants
+%   \end{itemize}
+
+%   \vspace{0.5cm}
+%   \only<6->{\textbf{Next week: quantum analog-digital conversion and the swap test.}}
+% \end{frame}
 
 \begin{frame}
   \frametitle{Quiz time!}
