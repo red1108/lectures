@@ -1,6 +1,18 @@
 **/builds/
 **/references/
 
+# manim-slides intermediates (final artifact is main.html via --one-file)
+**/slides/
+**/main_assets/
+
+# Python
+**/__pycache__/
+.venv/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
 # LaTeX auxiliary files in case a document is built outside builds/
 *.aux
 *.bbl
@@ -21,3 +33,5 @@
 *.xdv
 
 phillosophy.md
+beamer.md
+manim.md
