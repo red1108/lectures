@@ -102,6 +102,8 @@ def roadmap_step_for(major_section: str, section: str) -> str:
         return "2-SAT"
     if section == "3-SAT":
         return "3-SAT"
+    if section == "Classical Flow":
+        return "3-SAT"
     if section in {"Bridge", "CTQW", "Ballistic"}:
         return "Quantum Walk"
     if section in {"Glued Trees", "Column Subspace", "Closing"}:

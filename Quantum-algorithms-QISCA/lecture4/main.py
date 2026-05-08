@@ -76,12 +76,14 @@ SLIDE_METHODS = (
     "_slide_three_sat_drift",
     "_slide_three_sat_trace",
     "_slide_three_sat_runtime",
+    "_slide_classical_flow_language",
     "_slide_quantum_bridge",
     "_slide_ctqw_equation",
     "_slide_ctqw_properties",
     "_slide_quantum_1d_setup",
     "_slide_ballistic_vs_diffusive",
     "_slide_plane_wave_shift",
+    "_slide_group_velocity_intuition",
     "_slide_group_velocity",
     "_slide_glued_trees_bridge",
     "_slide_glued_trees_graph",
@@ -109,6 +111,7 @@ MAJOR_SECTION_BY_SECTION = {
     "Motivation": "Random Walk",
     "2-SAT": "Random Walk",
     "3-SAT": "Random Walk",
+    "Classical Flow": "Random Walk",
     "Bridge": "Quantum Walk",
     "CTQW": "Quantum Walk",
     "Ballistic": "Quantum Walk",
@@ -3637,6 +3640,129 @@ class Lecture4(LectureScene):
             ),
         }
 
+    # === Classical-to-quantum bridge: steps to flow =====================
+    def _slide_classical_flow_language(self) -> None:
+        self.begin_slide(section="Classical Flow")
+
+        heading = body_text(
+            "Same walk, smoother language",
+            size=42,
+            weight="BOLD",
+        ).to_edge(UP, buff=0.80)
+        self.play(FadeIn(heading), run_time=0.4 / ANIM_SPEED)
+
+        lead = body_text(
+            "So far: one random local move at a time.",
+            size=24,
+            color=TEXT_MUTED,
+        ).move_to([0, 2.00, 0])
+        self.play(FadeIn(lead), run_time=0.35 / ANIM_SPEED)
+
+        graph, dots = self._path_graph(
+            5,
+            x_left=-3.25,
+            x_right=3.25,
+            y=0.40,
+            dot_color=TEXT_PRIMARY,
+            radius=0.060,
+        )
+        dots[2].set_color(TEXT_ACCENT)
+
+        masses = VGroup()
+        for dot, r, opacity in zip(
+            dots,
+            [0.12, 0.19, 0.30, 0.17, 0.10],
+            [0.16, 0.22, 0.30, 0.20, 0.14],
+        ):
+            mass = Circle(
+                radius=r,
+                stroke_color=TEXT_ACCENT,
+                stroke_width=1.4,
+                fill_color=TEXT_ACCENT,
+                fill_opacity=opacity,
+            ).move_to(dot.get_center())
+            masses.add(mass)
+
+        self.play(FadeIn(graph), run_time=0.45 / ANIM_SPEED)
+        self.play(FadeIn(masses), run_time=0.45 / VISUAL_SPEED)
+
+        flow_y = 0.92
+        inflow_left = Arrow(
+            dots[1].get_center() + [0.07, flow_y - 0.40, 0],
+            dots[2].get_center() + [-0.08, flow_y - 0.40, 0],
+            buff=0.08,
+            color=COLOR_TRUE,
+            stroke_width=2.2,
+            max_tip_length_to_length_ratio=0.12,
+        )
+        inflow_right = Arrow(
+            dots[3].get_center() + [-0.07, flow_y - 0.40, 0],
+            dots[2].get_center() + [0.08, flow_y - 0.40, 0],
+            buff=0.08,
+            color=COLOR_TRUE,
+            stroke_width=2.2,
+            max_tip_length_to_length_ratio=0.12,
+        )
+        outflow_left = Arrow(
+            dots[2].get_center() + [-0.08, -0.38, 0],
+            dots[1].get_center() + [0.07, -0.38, 0],
+            buff=0.08,
+            color=COLOR_FALSE,
+            stroke_width=1.8,
+            max_tip_length_to_length_ratio=0.12,
+        )
+        outflow_right = Arrow(
+            dots[2].get_center() + [0.08, -0.38, 0],
+            dots[3].get_center() + [-0.07, -0.38, 0],
+            buff=0.08,
+            color=COLOR_FALSE,
+            stroke_width=1.8,
+            max_tip_length_to_length_ratio=0.12,
+        )
+        flow_labels = VGroup(
+            body_text("inflow", size=17, color=COLOR_TRUE).move_to([0, 1.17, 0]),
+            body_text("outflow", size=17, color=COLOR_FALSE).move_to([0, -0.24, 0]),
+        )
+        self.play(
+            LaggedStart(
+                Create(inflow_left),
+                Create(inflow_right),
+                Create(outflow_left),
+                Create(outflow_right),
+                lag_ratio=0.18,
+            ),
+            run_time=0.9 / VISUAL_SPEED,
+        )
+        self.play(FadeIn(flow_labels), run_time=0.35 / ANIM_SPEED)
+
+        local = self._fit_math(
+            r"\frac{dp_v}{dt}=\sum_{u\sim v}(p_u-p_v)",
+            scale=0.26,
+            max_width=5.7,
+            color=TEXT_PRIMARY,
+        ).move_to([0, -0.95, 0])
+        vector = self._fit_math(
+            r"\frac{dp}{dt}=Lp",
+            scale=0.34,
+            max_width=3.8,
+            color=TEXT_ACCENT,
+        ).move_to([0, -1.62, 0])
+        caption = body_text(
+            "Not a new algorithm — the same classical walk in continuous time.",
+            size=20,
+            color=TEXT_MUTED,
+        ).move_to([0, -2.22, 0])
+        hook = body_text(
+            "Now this flow equation can be quantized.",
+            size=22,
+            color=TEXT_ACCENT,
+        ).move_to([0, -2.62, 0])
+        self.play(FadeIn(local), run_time=0.45 / ANIM_SPEED)
+        self.play(FadeIn(vector), run_time=0.45 / ANIM_SPEED)
+        self.play(FadeIn(caption), run_time=0.35 / ANIM_SPEED)
+        self.play(FadeIn(hook), run_time=0.35 / ANIM_SPEED)
+        self.wait(0.5)
+
     # === Quantum A1: bridge ============================================
     def _slide_quantum_bridge(self) -> None:
         self.begin_slide(section="Bridge")
@@ -3650,17 +3776,17 @@ class Lecture4(LectureScene):
 
         lines = VGroup(
             body_text(
-                "Random walk already did algorithmic work for us.",
+                "We rewrote random walk as probability flow.",
                 size=25,
                 color=TEXT_PRIMARY,
             ),
             body_text(
-                "But classical motion is diffusive, not ballistic.",
+                "Quantum mechanics also describes flow — but of amplitudes.",
                 size=25,
                 color=TEXT_PRIMARY,
             ),
             body_text(
-                "Can the walk itself propagate faster?",
+                "Can amplitude flow propagate faster?",
                 size=27,
                 color=TEXT_ACCENT,
             ),
@@ -3674,7 +3800,7 @@ class Lecture4(LectureScene):
         )
 
         hook = body_text(
-            "Do we have a quantum analog?",
+            "Replace  p(t)  by  ψ(t).",
             size=26,
             color=TEXT_ACCENT,
         ).move_to([0, -2.05, 0])
@@ -3693,7 +3819,7 @@ class Lecture4(LectureScene):
         ).to_edge(UP, buff=0.75)
         self.play(FadeIn(heading), run_time=0.4 / ANIM_SPEED)
 
-        classical_label = body_text("classical flow", size=21, color=TEXT_MUTED)
+        classical_label = body_text("classical probability flow", size=21, color=TEXT_MUTED)
         classical_eq = self._fit_math(
             r"\frac{d p}{d t}=L p",
             scale=0.40,
@@ -3708,7 +3834,7 @@ class Lecture4(LectureScene):
         self.next_slide()
         self.begin_slide(section="CTQW", clear=False)
 
-        quantum_label = body_text("quantum flow", size=21, color=TEXT_PRIMARY)
+        quantum_label = body_text("quantum amplitude flow", size=21, color=TEXT_PRIMARY)
         quantum_eq = self._fit_math(
             r"{\color[HTML]{79B8FF} i}\frac{d|\psi\rangle}{dt}"
             r"=L|\psi\rangle",
@@ -3738,7 +3864,7 @@ class Lecture4(LectureScene):
         i_chip[1].move_to(i_chip[0].get_center())
         i_chip.move_to([-2.25, -0.77, 0])
         note = body_text(
-            "only an  i  apart",
+            "same graph operator; amplitudes need the  i",
             size=23,
             color=TEXT_ACCENT,
         ).move_to([0, -2.30, 0])
@@ -4128,7 +4254,7 @@ class Lecture4(LectureScene):
         ).arrange(RIGHT, buff=0.10)
         caption1.move_to([0, -2.05, 0])
         caption2 = body_text(
-            "These same states diagonalize L — next, we read off the velocity.",
+            "Next: nearby momenta form a packet, and the packet peak has a velocity.",
             size=21,
             color=TEXT_ACCENT,
         ).move_to([0, -2.55, 0])
@@ -4140,6 +4266,90 @@ class Lecture4(LectureScene):
         self.play(FadeIn(caption2), run_time=0.40 / ANIM_SPEED)
         self.wait(0.55)
 
+    # === Quantum C2c: why slope is velocity ============================
+    def _slide_group_velocity_intuition(self) -> None:
+        self.begin_slide(section="Ballistic")
+
+        heading = body_text("Why does slope mean speed?", size=42, weight="BOLD")
+        heading.to_edge(UP, buff=0.75)
+        self.play(FadeIn(heading), run_time=0.35 / ANIM_SPEED)
+
+        lead = body_text(
+            "A localized state is a packet of nearby momenta.",
+            size=24,
+            color=TEXT_MUTED,
+        ).move_to([0, 2.05, 0])
+        self.play(FadeIn(lead), run_time=0.35 / ANIM_SPEED)
+
+        axis = Line([-4.75, 0.85, 0], [4.75, 0.85, 0], stroke_color=TEXT_MUTED, stroke_width=1.2)
+
+        def packet(center_x: float, *, color: str, opacity: float = 1.0) -> VGroup:
+            points = []
+            for i in range(96):
+                s = -2.5 + 5.0 * i / 95
+                envelope = exp(-(s * s) / 1.7)
+                carrier = cos(6.0 * s)
+                points.append([center_x + 0.62 * s, 0.85 + 0.48 * envelope * carrier, 0])
+            waves = VGroup(
+                *[
+                    Line(
+                        points[i],
+                        points[i + 1],
+                        stroke_color=color,
+                        stroke_width=2.2,
+                    )
+                    for i in range(len(points) - 1)
+                ]
+            )
+            waves.set_opacity(opacity)
+            return waves
+
+        packet_start = packet(-2.15, color=TEXT_MUTED, opacity=0.45)
+        packet_later = packet(1.85, color=TEXT_ACCENT, opacity=1.0)
+        move_arrow = Arrow(
+            [-1.05, 1.42, 0],
+            [0.75, 1.42, 0],
+            buff=0,
+            color=COLOR_HIGHLIGHT,
+            stroke_width=2.2,
+            max_tip_length_to_length_ratio=0.10,
+        )
+        packet_labels = VGroup(
+            body_text("t = 0", size=18, color=TEXT_MUTED).move_to([-2.15, 0.20, 0]),
+            body_text("later", size=18, color=TEXT_ACCENT).move_to([1.85, 0.20, 0]),
+        )
+        self.play(FadeIn(axis), FadeIn(packet_start), run_time=0.50 / VISUAL_SPEED)
+        self.play(Create(move_arrow), FadeIn(packet_later), FadeIn(packet_labels), run_time=0.75 / VISUAL_SPEED)
+
+        phase_text = body_text(
+            "Where nearby momenta stay in phase, the packet peak appears.",
+            size=21,
+            color=TEXT_PRIMARY,
+        ).move_to([0, -0.15, 0])
+        phase_eq = self._fit_math(
+            r"\phi(p)=p x-\omega(p)t",
+            scale=0.25,
+            max_width=3.8,
+            color=TEXT_PRIMARY,
+        ).move_to([-2.75, -1.05, 0])
+        stationary = self._fit_math(
+            r"\frac{d\phi}{dp}=0\quad\Rightarrow\quad \frac{x}{t}=\frac{d\omega}{dp}",
+            scale=0.25,
+            max_width=5.4,
+            color=TEXT_ACCENT,
+        ).move_to([2.05, -1.05, 0])
+        self.play(FadeIn(phase_text), run_time=0.35 / ANIM_SPEED)
+        self.play(FadeIn(phase_eq), run_time=0.40 / ANIM_SPEED)
+        self.play(FadeIn(stationary), run_time=0.45 / ANIM_SPEED)
+
+        takeaway = VGroup(
+            body_text("Group velocity:", size=24, color=TEXT_MUTED),
+            math(r"v_g(p)=\frac{d\omega}{dp}", scale=0.22, color=TEXT_ACCENT),
+        ).arrange(RIGHT, buff=0.18)
+        takeaway.move_to([0, -2.35, 0])
+        self.play(FadeIn(takeaway), run_time=0.40 / ANIM_SPEED)
+        self.wait(0.5)
+
     # === Quantum C3: why ballistic =====================================
     def _slide_group_velocity(self) -> None:
         self.begin_slide(section="Ballistic")
@@ -4149,22 +4359,22 @@ class Lecture4(LectureScene):
         self.play(FadeIn(heading), run_time=0.4 / ANIM_SPEED)
 
         eig = self._fit_math(
-            r"L|\hat p\rangle=2(\cos p-1)|\hat p\rangle",
-            scale=0.34,
-            max_width=7.0,
+            r"L|\hat p\rangle=\omega(p)|\hat p\rangle,\qquad \omega(p)=2(\cos p-1)",
+            scale=0.28,
+            max_width=8.2,
         ).move_to([0, 1.05, 0])
         vel = self._fit_math(
-            r"v(p)=\frac{d\lambda}{dp}=-2\sin p,\qquad |v|\le 2",
-            scale=0.32,
-            max_width=7.0,
+            r"v_g(p)=\frac{d\omega}{dp}=-2\sin p,\qquad |v_g|\le 2",
+            scale=0.30,
+            max_width=7.4,
             color=TEXT_ACCENT,
         ).move_to([0, 0.05, 0])
         self.play(FadeIn(eig), run_time=0.45 / ANIM_SPEED)
         self.play(FadeIn(vel), run_time=0.45 / ANIM_SPEED)
 
         compare = VGroup(
-            body_text("Classical: diffusion equation", size=24, color=TEXT_MUTED),
-            body_text("Quantum: wave equation", size=26, color=TEXT_ACCENT),
+            body_text("Classical diffusion: width grows like sqrt(t)", size=24, color=TEXT_MUTED),
+            body_text("Quantum wave packets: fronts move distance O(t)", size=26, color=TEXT_ACCENT),
         ).arrange(DOWN, buff=0.35).move_to([0, -1.55, 0])
         self.play(
             LaggedStart(*[FadeIn(row) for row in compare], lag_ratio=0.3),
@@ -4276,30 +4486,65 @@ class Lecture4(LectureScene):
     def _slide_black_box_access(self) -> None:
         self.begin_slide(section="Glued Trees")
 
-        heading = body_text("What you can ask", size=44, weight="BOLD")
+        heading = body_text("The query model", size=44, weight="BOLD")
+        heading.to_edge(UP, buff=0.8)
+        self.play(FadeIn(heading), run_time=0.4 / ANIM_SPEED)
+
+        model = VGroup(
+            body_text("Input:", size=25, color=TEXT_MUTED),
+            body_text("the name of ENTRANCE, plus an oracle for local edges", size=25),
+        ).arrange(RIGHT, buff=0.18)
+        goal = VGroup(
+            body_text("Goal:", size=25, color=TEXT_MUTED),
+            body_text("output the random name of EXIT", size=25, color=TEXT_ACCENT),
+        ).arrange(RIGHT, buff=0.18)
+        names = body_text(
+            "All other vertex names are hidden random strings.",
+            size=23,
+            color=TEXT_PRIMARY,
+        )
+        model_group = VGroup(model, goal, names).arrange(DOWN, buff=0.42)
+        model_group.move_to([0, 0.45, 0])
+        self.play(
+            LaggedStart(*[FadeIn(row) for row in model_group], lag_ratio=0.28),
+            run_time=0.8 / ANIM_SPEED,
+        )
+
+        hook = body_text(
+            "So the graph is not given as a picture — only as queries.",
+            size=23,
+            color=TEXT_ACCENT,
+        ).move_to([0, -2.05, 0])
+        self.play(FadeIn(hook), run_time=0.4 / ANIM_SPEED)
+        self.wait(0.45)
+
+        self.next_slide()
+        self.begin_slide(section="Glued Trees")
+
+        heading = body_text("Classical oracle", size=44, weight="BOLD")
         heading.to_edge(UP, buff=0.8)
         self.play(FadeIn(heading), run_time=0.4 / ANIM_SPEED)
 
         oracle_box = Rectangle(
-            width=4.8,
+            width=5.2,
             height=1.25,
             stroke_color=TEXT_ACCENT,
             stroke_width=2.0,
             fill_color=TEXT_ACCENT,
             fill_opacity=0.06,
-        ).move_to([0, 1.0, 0])
+        ).move_to([0, 1.05, 0])
         oracle = self._fit_math(
-            r"v_c(a)=\text{the }c\text{-th neighbor of }a",
+            r"\mathcal O_{\mathrm{cl}}(a,c)=v_c(a)",
             scale=0.25,
-            max_width=4.2,
+            max_width=4.5,
             color=TEXT_ACCENT,
         ).move_to(oracle_box.get_center())
         self.play(FadeIn(oracle_box), FadeIn(oracle), run_time=0.5 / ANIM_SPEED)
 
         bullets = VGroup(
-            body_text("Vertices have random names.", size=24),
-            body_text("ENTRANCE is the only name initially known.", size=24),
-            body_text("Random strings usually return “no vertex”.", size=24),
+            body_text("Ask for port c = 1, 2, 3 of a named vertex a.", size=24),
+            body_text("The answer is one neighbor name, or “no vertex”.", size=24),
+            body_text("Each query reveals one local edge.", size=24),
         ).arrange(DOWN, aligned_edge=LEFT, buff=0.42).move_to([0, -0.55, 0])
         self.play(
             LaggedStart(*[FadeIn(b) for b in bullets], lag_ratio=0.25),
@@ -4307,11 +4552,56 @@ class Lecture4(LectureScene):
         )
 
         block = body_text(
-            "So BFS cannot jump to the far side.",
+            "A classical algorithm learns the graph one discovered name at a time.",
             size=24,
             color=TEXT_ACCENT,
         ).move_to([0, -2.35, 0])
         self.play(FadeIn(block), run_time=0.4 / ANIM_SPEED)
+        self.wait(0.45)
+
+        self.next_slide()
+        self.begin_slide(section="Glued Trees")
+
+        heading = body_text("Quantum oracle", size=44, weight="BOLD")
+        heading.to_edge(UP, buff=0.8)
+        self.play(FadeIn(heading), run_time=0.4 / ANIM_SPEED)
+
+        quantum_box = Rectangle(
+            width=6.4,
+            height=1.25,
+            stroke_color=TEXT_ACCENT,
+            stroke_width=2.0,
+            fill_color=TEXT_ACCENT,
+            fill_opacity=0.06,
+        ).move_to([0, 1.05, 0])
+        quantum_oracle = self._fit_math(
+            r"U_{\mathcal O}|a,c,b\rangle=|a,c,b\oplus v_c(a)\rangle",
+            scale=0.24,
+            max_width=5.9,
+            color=TEXT_ACCENT,
+        ).move_to(quantum_box.get_center())
+        self.play(
+            FadeIn(quantum_box),
+            FadeIn(quantum_oracle),
+            run_time=0.5 / ANIM_SPEED,
+        )
+
+        q_bullets = VGroup(
+            body_text("Same neighbor function v_c(a).", size=24),
+            body_text("But queries may be made in superposition.", size=24),
+            body_text("This lets us simulate the adjacency Hamiltonian H = A.", size=24),
+        ).arrange(DOWN, aligned_edge=LEFT, buff=0.42).move_to([0, -0.50, 0])
+        self.play(
+            LaggedStart(*[FadeIn(b) for b in q_bullets], lag_ratio=0.25),
+            run_time=0.8 / ANIM_SPEED,
+        )
+
+        same = body_text(
+            "Same oracle information. Different access mode.",
+            size=24,
+            color=TEXT_ACCENT,
+        ).move_to([0, -2.35, 0])
+        self.play(FadeIn(same), run_time=0.4 / ANIM_SPEED)
         self.wait(0.5)
 
     # === Quantum D4: classical failure =================================
