@@ -5,6 +5,9 @@
 **/slides/
 **/main_assets/
 
+# Local presenter notes
+**/speaker_notes.md
+
 # Python
 **/__pycache__/
 .venv/
