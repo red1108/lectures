@@ -8,6 +8,14 @@
 # Local presenter notes
 **/speaker_notes.md
 
+# Local Manim lecture build helpers and generated exports
+Quantum-algorithms-QISCA/lecture*/build.py
+Quantum-algorithms-QISCA/lecture*/build_static.py
+Quantum-algorithms-QISCA/lecture*/main.html
+Quantum-algorithms-QISCA/lecture*/main.static.html
+Quantum-algorithms-QISCA/lecture*/manim.cfg
+Quantum-algorithms-QISCA/lecture*/requirements.txt
+
 # Python
 **/__pycache__/
 .venv/

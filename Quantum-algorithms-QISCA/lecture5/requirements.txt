@@ -1,2 +1,0 @@
-manim>=0.18
-manim-slides>=5.1
