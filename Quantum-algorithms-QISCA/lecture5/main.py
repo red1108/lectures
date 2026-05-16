@@ -77,7 +77,7 @@ from shared.quantum_circuit import (
 
 AUTHOR = "Mingyu Lee"
 TITLE = "Lecture 5"
-DATE = "2026 May 13"
+DATE = "2026 May 15"
 
 LABEL_COLORS = {
     "cat": COLOR_VAR3,
