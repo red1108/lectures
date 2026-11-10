@@ -1,0 +1,27 @@
+{
+  "name": "pebble-scheduling-talk",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "slidev",
+    "build": "slidev build",
+    "test": "node --experimental-strip-types tests/traces.test.ts",
+    "export": "slidev export --output pebble-talk.pdf --wait 3000 --wait-until networkidle",
+    "traces:generate": "python3 scripts/generate_traces.py",
+    "test:browser": "node tests/browser.mjs"
+  },
+  "dependencies": {
+    "@slidev/cli": "53.1.0",
+    "@slidev/client": "53.1.0",
+    "@slidev/theme-bricks": "0.25.0",
+    "vue": "3.5.45"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "playwright-chromium": "^1.56.1",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.generated/
+/pebble-talk.pdf
+.DS_Store

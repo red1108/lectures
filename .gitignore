@@ -1,20 +1,17 @@
 **/builds/
 **/references/
 
-# manim-slides intermediates (final artifact is main.html via --one-file)
+# Generated Manim exports and intermediates
 **/slides/
 **/main_assets/
 
 # Local presenter notes
 **/speaker_notes.md
 
-# Local Manim lecture build helpers and generated exports
-Quantum-algorithms-QISCA/lecture*/build.py
-Quantum-algorithms-QISCA/lecture*/build_static.py
+# Generated lecture outputs
+Quantum-algorithms-QISCA/lecture*/main.pdf
 Quantum-algorithms-QISCA/lecture*/main.html
 Quantum-algorithms-QISCA/lecture*/main.static.html
-Quantum-algorithms-QISCA/lecture*/manim.cfg
-Quantum-algorithms-QISCA/lecture*/requirements.txt
 
 # Python
 **/__pycache__/
@@ -43,6 +40,7 @@ Quantum-algorithms-QISCA/lecture*/requirements.txt
 *.vrb
 *.xdv
 
-phillosophy.md
-beamer.md
-manim.md
+# Slidev dependencies and generated output
+**/node_modules/
+**/dist/
+**/.generated/
