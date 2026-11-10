@@ -1,6 +1,6 @@
 # Pebbling computations
 
-A 19-slide, 15–20 minute introductory talk using Slidev and the
+A 21-slide, 15–20 minute introductory talk using Slidev and the
 [Bricks theme](https://github.com/slidevjs/themes/tree/main/packages/theme-bricks).
 The slides are in English and presenter notes are in Korean.
 
@@ -78,6 +78,13 @@ The slides use the SVG and PNG files in `public/figures/`. To redraw them:
 ```sh
 uv run --with matplotlib python scripts/draw_measurement_circuit.py
 ```
+
+## Research plots
+
+`sequential-work-and-memory.svg` and `associative-reduction-depth.svg` are
+vector conversions of the submitted `numerical_tradeoffs.pdf` and
+`associative_reduction_depth.pdf`, respectively. Convert each with
+`pdftocairo -svg input.pdf output.svg`.
 
 ## Tracked files
 

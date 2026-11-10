@@ -13,10 +13,7 @@ fonts:
 
 # Pebbling computations
 
-### Scheduling memory, one computation at a time
-
 <div class="cover-byline">Mingyu Lee · Sanghyun Lee · Kabgyun Jeong</div>
-<div class="cover-small">Reversible pebbling · Spooky pebbling · KSS · KMRV · Block cleanup</div>
 
 <!--
 이번 발표는 처음 접하는 청중을 대상으로 한다. pebble game의 규칙을 설명한 뒤 KSS, block cleanup, KMRV를 실제 스케줄로 살펴본다. 15–20분을 기준으로 각 trace의 핵심 순간만 보여준다.
@@ -93,7 +90,7 @@ $$
 </div>
 <div v-click="2" class="ghost-summary">
 <span class="small-stone stored"></span><span class="small-arrow">→</span><span class="small-stone deferred">G</span>
-<span>Register freed · keep m · correct the phase later</span>
+<span class="ghost-summary-text">Free the register.<br>Keep the string <em>m</em> classically.<br>We can correct the phase later.</span>
 </div>
 </div>
 
@@ -176,7 +173,7 @@ layout: default
 <div class="visual-intro">
 <div class="intro-line">Leave ghosts. Return to correct them.</div>
 <TracePlayer example="line-spooky" intro />
-<div class="intro-caption">8 values · 3 registers</div>
+<div class="intro-caption">Space budget: 3</div>
 </div>
 
 <!--
@@ -222,7 +219,7 @@ layout: default
 
 <div class="split-demo"><div>
 <div class="lead small">Keep the root.<br>Clear the ghosts.</div>
-<p class="note-small">Height = 4<br>Space = 5</p>
+<p class="demo-budget">Height = 4<br>Space = 5</p>
 </div><div><TracePlayer example="kss4" /></div></div>
 
 <!--
@@ -233,7 +230,7 @@ layout: default
 layout: default
 ---
 
-# Our idea: block clean
+# Block cleanup
 
 <BlockCleanupIdea />
 
@@ -248,9 +245,8 @@ layout: default
 # Block cleanup in action
 
 <div class="split-demo"><div>
-<div class="lead small">Less recomputation</div>
-<p>KSS &nbsp; 71 work<br>Ours &nbsp; <b>60 work</b></p>
-<p class="note-small">Height = 4<br>Space = 5</p>
+<div class="lead small">KSS &nbsp; 71 work<br>Ours &nbsp; <b>60 work</b></div>
+<p class="demo-budget">Height = 4<br>Space = 5</p>
 </div><div><TracePlayer example="sequential4" /></div></div>
 
 <!--
@@ -303,7 +299,6 @@ $$
 $$
 
 </div>
-<div class="proof-reference">Our paper · Theorem 3.4 (upper bound) · Theorem 4.3 (matching lower bound)</div>
 </div>
 
 <!--
@@ -320,11 +315,45 @@ $$
 layout: default
 ---
 
+# The complete-tree result
+
+<div class="lead">Complete tree with n = 2<sup>H</sup> − 1 nodes and H + 1 registers</div>
+
+| Schedule | Work |
+|:--|:--|
+| KSS | $O(n\log n)$ |
+| Block cleanup | $\Theta(n\log n/\log\log n)$ |
+
+<div class="takeaway">Block cleanup achieves optimal work up to constant factors (Theorem 1.1).</div>
+
+<!--
+KSS의 steps에는 ghosting이 포함된다. 우리의 work는 pebble과 unpebble 횟수다. 두 convention은 완전한 schedule에서 최대 상수배만 차이 나므로 점근적 비교에 문제가 없다. 전체 feasible space에서 최적 work는 Theta(nH/log(s+1))다. 병렬 depth도 별도로 최적화하며, 어떤 budget에서는 최적 depth가 work만 최소화할 때보다 더 많은 work를 요구한다. Source: current manuscript, Theorems 1.1, 3.4, and 4.3.
+-->
+
+---
+layout: default
+---
+
+# Work comparison with KSS
+
+<div class="lead small">Space budget: <em>H</em> + 1</div>
+
+<img class="result-plot" src="/figures/sequential-work-and-memory.svg" alt="Across heights 5 through 17, block cleanup uses less work and keeps more registers occupied on average than KSS. The work reduction reaches 57.67 percent at height 17." />
+
+<!--
+왼쪽에서 회색 KSS와 파란색 block cleanup의 work를 로그축으로 비교한다. 초록 점선은 오른쪽 축으로 읽는다. KSS 대비 절감률은 H=5의 25.65%에서 H=17의 57.67%까지 전반적으로 커진다. 오른쪽 패널은 같은 공간 한도에서 실행 중 평균적으로 레지스터를 얼마나 채웠는지 보여준다. H=17에서 두 방법의 한도는 18개이고, 평균 점유율은 KSS 37.81%, block cleanup 49.45%다. 경계값을 유지하면 나중에 다시 계산할 일이 줄어든다.
+출처는 ACM 제출본 6.1절의 numerical_tradeoffs.pdf다.
+-->
+
+---
+layout: default
+---
+
 # Parallel spooky pebbling
 
 <div class="split-demo"><div>
-<div class="lead small">Disjoint registers → same round</div>
-<p class="note-small">Compute / uncompute → ghost<br>Height = 3<br>Space = 4</p>
+<div class="lead small">Operations on disjoint registers run in parallel.</div>
+<p class="demo-budget">Height = 3<br>Space = 4</p>
 </div><div><TracePlayer example="parallel" /></div></div>
 
 <!--
@@ -352,26 +381,6 @@ Source: https://arxiv.org/abs/2510.08432; repository cli/kmrv.cpp kmrv_path.
 layout: default
 ---
 
-# The complete-tree result
-
-<div class="lead">At the minimum space, block cleanup reduces recomputation.</div>
-
-| Schedule | Cost |
-|:--|:--|
-| KSS | $O(n\log n)$ steps |
-| Block cleanup | $\Theta(n\log n/\log\log n)$ work |
-
-<p class="note-small">Both use H + 1 registers on a complete tree with n = 2<sup>H</sup> − 1 nodes.<br>KSS steps include ghosting; work counts computations and uncomputations. The two counts differ by less than a factor of two.</p>
-<div class="takeaway">The new work bound is asymptotically optimal.</div>
-
-<!--
-KSS의 steps에는 ghosting이 포함된다. 우리의 work는 pebble과 unpebble 횟수다. 두 convention은 완전한 schedule에서 최대 상수배만 차이 나므로 점근적 비교에 문제가 없다. 전체 feasible space에서 최적 work는 Theta(nH/log(s+1))다. 병렬 depth도 별도로 최적화하며, 어떤 budget에서는 최적 depth가 work만 최소화할 때보다 더 많은 work를 요구한다. Source: current manuscript, Theorems 1.1, 3.4, and 4.3.
--->
-
----
-layout: default
----
-
 # Associative reductions
 
 <div class="lead">Same ordered inputs, different evaluation trees.</div>
@@ -379,49 +388,58 @@ layout: default
 <div><h3>KMRV</h3><p>Left-to-right prefix path</p><p class="order-example">((a₁ ⊕ a₂) ⊕ a₃) ⊕ a₄</p></div>
 <div><h3>Our construction</h3><p>Balanced binary tree</p><p class="order-example">(a₁ ⊕ a₂) ⊕ (a₃ ⊕ a₄)</p></div>
 </div>
-<p class="note-small">H = 5–17 · same measured KMRV implementation budget · input preparation and cleanup included.</p>
-<div class="takeaway">Our depth is lower for H = 7–17; work is comparable across the tested heights.</div>
 
 <!--
-이 비교에서 결합법칙으로 서로 다른 괄호 배치를 선택할 수 있다. 그래프가 다르므로 고정 그래프에서 알고리즘만 비교한 것이 아니다. KMRV의 작은 입력 예시에서는 우리 depth가 더 크다. 표는 논문 6.2의 조건과 일치한다.
+결합법칙으로 입력 순서를 보존하면서 서로 다른 괄호 배치를 선택할 수 있다. 왼쪽은 prefix path, 오른쪽은 balanced tree다. 두 방식의 병렬 라운드 수를 다음 장에서 비교한다.
 -->
 
 ---
 layout: default
 ---
 
-# Application: elliptic-curve arithmetic
+# Depth comparison with KMRV
 
-<div class="lead">Point-addition trees occur in a quantum discrete-logarithm algorithm.</div>
+<div class="lead small">Both schedules use the same register budget at each height.</div>
 
-$$
-|P_1\rangle |P_2\rangle |0\rangle
-\longmapsto |P_1\rangle |P_2\rangle |F_p(P_1,P_2)\rangle
-$$
-
-<p>Each value stores three coordinates modulo a small prime. The function F<sub>p</sub> combines two values.</p>
-<div class="takeaway">At KSS space, abstract work decreases by 31.14%–41.32% across four trees.</div>
-<p class="note-small">Measured task: retain the root triple and clean all other values. Residue extraction and accumulation are excluded.</p>
-<div class="source">Chevignard, Fouque &amp; Schrottenloher (CFS), 2026</div>
+<img class="result-plot" src="/figures/associative-reduction-depth.svg" alt="The balanced tree is slightly deeper than the KMRV prefix path at heights 5 and 6, then shallower from heights 7 through 17. At height 17 depth falls from 205,370 to 94,824 rounds." />
 
 <!--
-CFS의 실제 root에는 별도 연산이 있다. 논문의 수치는 root triple을 보존하는 공통 tree-evaluation 과제에서 계산한 추상적 pebbling work이며, 전체 ECDLP gate count 또는 물리적 시간의 감소율이 아니다.
-Source: https://eprint.iacr.org/2026/280 and current manuscript Section 6.3.
+H=5–17에서 KMRV 구현이 실행 가능한 최소 레지스터 수를 구해 두 스케줄에 같은 예산을 준다. 두 스케줄 모두 입력 준비와 정리를 포함한다. 왼쪽 로그축은 라운드 수이고, 오른쪽 축의 초록 점선은 KMRV 대비 depth 절감률이다. H=5,6에서는 우리 쪽이 조금 더 깊고 H=7부터 더 얕다. H=17에서는 두 스케줄 모두 레지스터 37개를 사용하며, depth는 205,370에서 94,824로 줄어든다. 절감률은 53.83%다. Work는 실험 범위에서 비슷하다.
+출처는 ACM 제출본 6.2절의 associative_reduction_depth.pdf와 Table 1이다.
 -->
 
 ---
 layout: default
 ---
 
-# Takeaways
+# Elliptic-curve point-addition trees
 
-<div class="sequence ending">
-<div><span class="sequence-num">01</span><h3>Spooky pebbling</h3><p>Trade quantum space for deferred corrections.</p></div>
-<div><span class="sequence-num">02</span><h3>Block cleanup</h3><p>Reuse a boundary to reduce reconstruction.</p></div>
-<div><span class="sequence-num">03</span><h3>Parallel scheduling</h3><p>Minimize depth and work separately.</p></div>
-</div>
-<div class="closing">Thank you</div>
+<div class="lead small">31–41% less work at the same register budget.</div>
+
+| Curve | Registers | KSS work | Block cleanup work |
+|:--|--:|--:|--:|
+| P-224 | 7 | 203 | 135 |
+| P-256 | 7 | 238 | 159 |
+| P-384 | 7 | 395 | 272 |
+| P-521 | 8 | 547 | 321 |
 
 <!--
-전체 work-depth tradeoff at a fixed space budget와 일반 DAG 확장은 열린 문제다.
+Chevignard, Fouque, and Schrottenloher의 양자 이산로그 알고리즘에서 쓰는 네 개의 점 덧셈 트리다. 각 pebble은 작은 소수 p를 법으로 하는 좌표 세 개를 저장한다. 같은 레지스터 예산에서 루트의 좌표를 남기고 나머지 값과 ghost를 모두 지우는 데 필요한 계산과 역계산 횟수를 비교한다. 절감 범위는 31.14%–41.32%다. CFS 알고리즘에서 뒤이어 수행하는 residue extraction과 accumulation은 이 수치에 포함되지 않는다.
+Source: https://eprint.iacr.org/2026/280 and current manuscript Section 6.3, Table 2.
+-->
+
+---
+layout: default
+---
+
+# Open questions
+
+<div class="lead small">At fixed space, what is the full work–depth tradeoff for complete binary trees?</div>
+
+<div class="lead small">Can we extend block cleanup to DAGs with shared values and prove tight bounds?</div>
+
+<!--
+Theorem 5.2에서 s=Theta(n/H)이면 최소 work는 Theta(n)이지만, 최적 depth를 달성하려면 Theta(n(1+log* H)) work가 필요하다. 고정된 공간 예산에서 가능한 work와 depth의 전체 관계는 열린 문제다.
+트리에서는 중간값이 한 부모에게만 전달된다. 여러 연산이 같은 중간값을 입력으로 쓰면 의존성이 일반 DAG를 이룬다. 이 경우에도 block cleanup을 적용할 수 있는지, 그리고 work와 depth에 대해 일치하는 상한과 하한을 얻을 수 있는지가 두 번째 질문이다.
+출처는 ACM 제출본 7절 Discussion이다.
 -->

@@ -5,21 +5,18 @@
 .slidev-layout.default h1 + p{opacity:1}
 .slidev-layout.cover > div{margin-left:35%;width:60%;padding:20px;background:rgba(255,255,255,.94)}
 .slidev-layout.cover h1{font-size:54px!important;line-height:1.1!important;max-width:570px}
-.slidev-layout.cover h3{font-size:23px!important;color:#39756e;margin-top:28px;font-weight:500;opacity:1!important;text-transform:none!important;letter-spacing:0!important}
 .cover-byline{margin-top:60px;font-size:19px;color:#4a6660}
-.cover-small{margin-top:15px;font-size:14px;color:#6a827b;max-width:600px}
 .lead{font-size:26px;line-height:1.32;color:#3e655e;margin:0 0 25px}.lead.small{font-size:22px}
 .columns-2{display:grid;grid-template-columns:1fr 1fr;gap:42px;margin-top:28px}
-.columns-2 h3,.sequence h3{font-family:var(--slidev-font-sans)!important;font-size:17px!important;font-weight:700!important;color:#337469;opacity:1!important;text-transform:none!important;letter-spacing:0!important;margin:0 0 12px!important}
-.columns-2 p,.sequence p{font-size:17px;line-height:1.45;margin:0;color:#4d6460}
+.columns-2 h3{font-family:var(--slidev-font-sans)!important;font-size:17px!important;font-weight:700!important;color:#337469;opacity:1!important;text-transform:none!important;letter-spacing:0!important;margin:0 0 12px!important}
+.columns-2 p{font-size:17px;line-height:1.45;margin:0;color:#4d6460}
 .takeaway{font-size:18px;margin-top:34px;border-left:4px solid #dca564;padding:12px 0 12px 18px;color:#36534c}
 .split-demo{display:grid;grid-template-columns:32% 65%;gap:3%;align-items:start}
 .split-demo.code-layout{grid-template-columns:42% 55%}
 .split-demo p{font-size:16px;line-height:1.45}
+.split-demo .demo-budget{font-size:19px;color:#617d75;font-variant-numeric:tabular-nums}
 .note-small{font-size:13px!important;color:#70847f!important;line-height:1.45;margin-top:18px}
 .tag{display:inline-block;font-size:11px;letter-spacing:.04em;font-weight:700;padding:4px 7px;border-radius:4px;margin-right:3px}.tag.green{background:#dcece2;color:#316c5e}.tag.rust{background:#f5dfce;color:#9d603f}.tag.gray{background:#e9ede8;color:#66766f}
-.sequence{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:60px}.sequence-num{font-family:var(--slidev-font-serif);font-size:38px;color:#daa266;display:block;margin-bottom:20px}.ending{margin-top:70px}
-.source{position:absolute;bottom:25px;left:200px;color:#72857b;font-size:11px}.closing{position:absolute;bottom:48px;right:70px;font-family:var(--slidev-font-serif);font-size:30px;color:#6c9a84}
 .block-diagram{width:72%;margin:20px auto 0;display:grid;grid-template-columns:repeat(3,1fr);text-align:center;gap:10px}.block-diagram span{display:block;font-size:12px;color:#738984}.block-top,.block-boundary,.block-bottom{padding:12px;border:1px solid #d4dfd6;border-radius:8px}.block-level{color:#3b7770;font-size:26px}.block-boundary div{color:#c68a48;font-size:23px;margin-top:32px}.block-bottom div{color:#9caea5;font-size:30px;margin-top:28px}
 .result-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:30px;margin-top:55px}.metric-label{font-size:14px;color:#70908a;text-transform:uppercase;letter-spacing:.08em}.formula{font-size:28px;margin-top:25px}.huge-symbol{font-size:32px!important;color:#8ca59a!important;margin-top:20px!important}
 .order-example{font-family:var(--slidev-font-mono);font-size:17px!important;color:#658780!important;margin-top:24px!important;white-space:nowrap}
@@ -60,6 +57,10 @@
   margin-top: 32px;
   font-size: 19px;
   color: #617d75;
+}
+.ghost-summary-text {
+  text-align: left;
+  line-height: 1.35;
 }
 .small-stone {
   display: inline-flex;
@@ -102,6 +103,9 @@
   font-size: 19px;
   color: #617d75;
 }
+.correction-row .slidev-katex-wrapper > p {
+  margin: 12px 0;
+}
 .correction-row .katex-display {
   font-size: 1.05em;
   margin: 6px 0;
@@ -129,6 +133,12 @@
   display: block;
   width: 100%;
   margin: 55px auto 0;
+}
+.result-plot {
+  display: block;
+  width: 100%;
+  height: 330px;
+  object-fit: contain;
 }
 .cleanup-comparison {
   display: grid;
@@ -199,10 +209,4 @@
 .minimum-space-result .katex-display {
   margin: 10px 0;
   font-size: 1em;
-}
-.proof-reference {
-  text-align: center;
-  font-size: 12px;
-  color: #7a8d80;
-  margin-top: 12px;
 }

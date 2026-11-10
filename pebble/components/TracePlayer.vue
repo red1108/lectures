@@ -127,7 +127,7 @@ function directedEdge(edge: {a: {x:number,y:number}, b: {x:number,y:number}}) {
 
 <style scoped>
 .trace-player{width:100%; color:#243141; font-family:var(--slidev-font-sans);}
-.with-code{display:grid;grid-template-columns:42% 55%;gap:3%;align-items:start}
+.with-code{display:grid;grid-template-columns:46% 51%;gap:3%;align-items:start}
 .trace-top{display:flex;justify-content:flex-end;align-items:center;font-size:13px;color:#68747a;letter-spacing:.01em;}
 .trace-step{font-variant-numeric:tabular-nums;font-weight:700;color:#334d57;}
 .graph{display:block;width:100%;height:240px;overflow:visible}

@@ -8,7 +8,7 @@ const page = await browser.newPage({viewport:{width:1280,height:720}, deviceScal
 const errors=[]
 page.on('pageerror', e=>errors.push(e.message))
 await mkdir('.generated/screens', {recursive:true})
-for(let n=1;n<=19;n++) {
+for(let n=1;n<=21;n++) {
   await page.goto(`${baseURL}/${n}`,{waitUntil:'networkidle'})
   await page.waitForTimeout(250)
   const info = await page.locator('.slidev-page:visible').first().evaluate(el=>({text:el.innerText.slice(0,65), overflow:el.scrollHeight>el.clientHeight+2 || el.scrollWidth>el.clientWidth+2})).catch(()=>({text:'',overflow:true}))
