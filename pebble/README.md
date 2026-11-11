@@ -1,6 +1,6 @@
 # Pebbling computations
 
-A 21-slide, 15–20 minute introductory talk using Slidev and the
+A 25-slide, 15–20 minute introductory talk using Slidev and the
 [Bricks theme](https://github.com/slidevjs/themes/tree/main/packages/theme-bricks).
 The slides are in English and presenter notes are in Korean.
 
@@ -53,7 +53,7 @@ records a clean source checkout. It lets the presentation run without that
 repository or a C++ compiler. Replay validates dependencies, register occupancy,
 parallel active sets, work, and final states.
 
-To regenerate the fixtures and the displayed C++ snippet, supply a source
+To regenerate the fixtures and the C++ reference snippet, supply a source
 checkout explicitly. A C++17 compiler and Git are required:
 
 ```sh
@@ -70,6 +70,8 @@ recomputation and cleanup. The block-cleanup idea diagram is a conceptual
 illustration. The algorithm trace slides replay recorded implementation actions.
 The KMRV path slide is retained with `disabled: true` and is omitted from the talk.
 Detailed mathematical explanations and source references are in presenter notes.
+The root-computation pseudocode follows Algorithm 1, `SequentialPebble(T)`,
+in the submitted manuscript; its action lines follow the recorded trace.
 
 ## Circuit figures
 

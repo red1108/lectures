@@ -1,6 +1,6 @@
 ---
 theme: '@slidev/theme-bricks'
-title: 'Pebbling computations'
+title: 'Spooky pebble game'
 info: 'A visual introduction to reversible and spooky pebbling on binary trees.'
 colorSchema: light
 transition: fade
@@ -11,7 +11,10 @@ fonts:
   mono: 'Fira Code'
 ---
 
-# Pebbling computations
+# Spooky pebble game
+
+<div class="cover-subtitle">Optimal (Parallel) Spooky Pebbling<br>on Binary Trees</div>
+<div class="cover-arxiv"><a href="https://arxiv.org/abs/2610.09434">arXiv:2610.09434</a></div>
 
 <div class="cover-byline">Mingyu Lee · Sanghyun Lee · Kabgyun Jeong</div>
 
@@ -23,7 +26,167 @@ fonts:
 layout: default
 ---
 
+# About me
+
+<div class="speaker-intro">
+  <div class="speaker-photo">
+    <img src="/speaker/mingyu-lee.png" alt="Mingyu Lee" />
+  </div>
+  <div class="speaker-bio">
+    <div class="speaker-name">Mingyu Lee</div>
+    <div class="speaker-university">Seoul National University</div>
+    <div class="speaker-study">Computer Science &amp; Engineering<br>Double major in Mathematics</div>
+    <a class="speaker-homepage" href="https://red1108.github.io/">red1108.github.io</a>
+    <div class="speaker-team">
+      <img src="/speaker/team-qst.png" alt="Team QST logo" />
+      <span>Team QST</span>
+    </div>
+  </div>
+</div>
+
+<!--
+서울대학교 컴퓨터공학 전공, 수학 복수전공. Team QST 소속이다. 홈페이지는 https://red1108.github.io/ 이다.
+-->
+
+---
+layout: default
+---
+
+# 1D chain computation
+
+<div class="computation-intro">
+<div class="computation-chain">
+
+$$
+\begin{aligned}
+&\sum_x\alpha_x|x\rangle|0\rangle|0\rangle\cdots|0\rangle\\
+\xrightarrow{U_1}\;&\sum_x\alpha_x|x\rangle|f_1(x)\rangle|0\rangle\cdots|0\rangle\\
+\xrightarrow{U_2}\;&\sum_x\alpha_x|x\rangle|f_1(x)\rangle|f_2(f_1(x))\rangle\cdots|0\rangle\\
+\xrightarrow{U_3,\ldots,U_n}\;&\sum_x\alpha_x|x\rangle|f_1(x)\rangle\cdots
+|f_n(f_{n-1}(\cdots f_1(x)\cdots))\rangle
+\end{aligned}
+$$
+
+</div>
+<div class="computation-reference">Optimal parallel depth (KMRV, EUROCRYPT 2026).</div>
+</div>
+
+<!--
+앞에서 계산한 값을 다음 연산의 입력으로 쓰는 예다. f_i는 계산기저 값을 받아 새 레지스터에 결과를 쓰는 연산이며, 표시한 식은 중첩 입력 전체에 선형적으로 작용한다. 마지막 줄은 중간값을 모두 보관한 forward computation이다.
+KMRV는 Kahanamoku-Meyer, Ragavan, Van Kirk다. Parallel Spooky Pebbling Makes Regev Factoring More Practical, EUROCRYPT 2026, LNCS 16541, pp. 402–430. 링크는 https://link.springer.com/chapter/10.1007/978-3-032-25291-3_14 이다. 고정 초기 pebble 뒤에 n개 정점이 있는 경로에서 terminal을 방문하고 추가 정점을 모두 정리하는 데 최적 2n round, O(log n) pebbles를 달성한다. 화면의 optimal은 parallel depth에 대한 결과다.
+-->
+
+---
+layout: default
+---
+
+# Two-input computation
+
+<div class="computation-intro computation-binary">
+
+$$
+|a\rangle|b\rangle|0\rangle
+\longmapsto |a\rangle|b\rangle|f(a,b)\rangle
+$$
+
+<h2>Example: repeated addition</h2>
+<div class="computation-addition">
+
+$$
+\begin{aligned}
+&|x_1\rangle\cdots|x_n\rangle|0\rangle\\
+&\quad\longmapsto
+|x_1\rangle\cdots|x_n\rangle
+|x_1+\cdots+x_n\rangle
+\end{aligned}
+$$
+
+</div>
+<div class="computation-scope">We study computations with binary-tree dependencies.</div>
+</div>
+
+<!--
+두 입력을 보존하는 out-of-place 연산이다. 덧셈에서는 두 부분합을 결합하는 연산을 반복해 전체 합을 만든다. 화면에는 입력과 전체 합을 저장하는 출력 레지스터를 표시하고, 계산 중 사용하는 보조공간은 생략했다. 보조공간은 계산 종료 시 정리한다. n>=2이며 각 레지스터는 표시한 값을 담기에 충분한 폭을 가진다. 이 사상도 입력들의 임의 중첩에 coherent하게 작용해야 한다. 이항연산의 입력을 각각 한 번씩 사용하는 고정 binary tree가 우리 논문의 계산 모델이다.
+-->
+
+---
+layout: default
+---
+
+# Coherence and garbage
+
+<div class="coherence-intro">
+<div class="coherence-comparison">
+<div class="coherence-column">
+<h2>If we don't clean the garbage</h2>
+<div class="coherence-state">
+
+$$
+|\Psi\rangle=\sum_x\alpha_x|x\rangle_X|g(x)\rangle_G|f(x)\rangle_F
+$$
+
+</div>
+<div class="coherence-reduced">
+
+$$
+\begin{aligned}
+&\rho_{XF}=\operatorname{Tr}_G\!\left(|\Psi\rangle\langle\Psi|\right)\\[12pt]
+&=\sum_{x,x'}\alpha_x\alpha_{x'}^*
+\underbrace{\langle g(x')|g(x)\rangle}_{\text{garbage overlap}}
+|x,f(x)\rangle\langle x',f(x')|
+\end{aligned}
+$$
+
+</div>
+<div class="coherence-result">
+
+If $\langle g(x')|g(x)\rangle=0$, the cross term vanishes.
+
+</div>
+</div>
+<div class="coherence-column">
+<h2>If we clean the garbage</h2>
+<div class="coherence-state">
+
+$$
+|\Psi_{\mathrm{clean}}\rangle=\sum_x\alpha_x|x\rangle_X|0\rangle_G|f(x)\rangle_F
+$$
+
+</div>
+<div class="coherence-reduced">
+
+$$
+\begin{aligned}
+&\rho^{\mathrm{clean}}_{XF}=\operatorname{Tr}_G\!\left(|\Psi_{\mathrm{clean}}\rangle\langle\Psi_{\mathrm{clean}}|\right)\\[12pt]
+&=\sum_{x,x'}\alpha_x\alpha_{x'}^*
+\underbrace{\langle0|0\rangle}_{1}
+|x,f(x)\rangle\langle x',f(x')|
+\end{aligned}
+$$
+
+</div>
+<div class="coherence-result">
+
+Every cross term is preserved.
+
+</div>
+</div>
+</div>
+</div>
+
+<!--
+X는 보존하는 입력, G는 중간값을 저장한 garbage, F는 최종 출력이다. 각 g(x)는 정규화된 상태다. 위의 두 상태는 전체 XGF의 순수 상태를 나타낸다. 아래 식은 G를 사용하지 않을 때 입출력 XF의 reduced state다.
+전체 density matrix를 전개하면 각 항에 |g(x)><g(x')|가 붙고, Tr(|a><b|)=<b|a>이므로 garbage overlap이 나온다. 계산기저의 garbage라면 이 값은 같은 비트열에서 1, 서로 다른 비트열에서 0이다. 서로 다른 garbage가 직교하면 그 입력들 사이의 off-diagonal term이 사라진다. 모든 입력에서 G를 같은 |0>으로 돌리면 모든 overlap이 1이 되어 원하는 coherent 입출력 상태가 보존된다.
+반드시 |0>일 필요는 없고, 입력과 무관한 같은 정규화 상태로 분리되어도 된다. x에 의존하는 위상도 의도한 연산과 일치하도록 보정되어야 한다. 여기서 비교하는 것은 XF이며, F만 따로 측정하는 통계는 cleanup 전후 같다. 보조공간을 회수하면서 coherent 서브루틴의 종료 조건을 만족시키는 것이 다음 pebbling 모델의 목표다.
+-->
+
+---
+layout: default
+---
+
 # Pebble game
+
+<img class="pebble-photo" src="/figures/pebbles.png" alt="Six smooth pebbles" />
 
 <PebbleRule />
 
@@ -80,13 +243,14 @@ $$
 \sum_x \alpha_x |x\rangle |f(x)\rangle
 $$
 
-<div v-click="1">
+<div v-click="1" class="measurement-result">
 <div class="measure-arrow">↓ <span>X-basis measurement · outcome m ∈ {0, 1}<sup>k</sup></span></div>
 
 $$
 \sum_x \alpha_x \textcolor{#a45f3e}{(-1)^{m\cdot f(x)}} |x\rangle
 $$
 
+<img class="measurement-ghost" src="/figures/measurement-ghost.svg" alt="Ghost" />
 </div>
 <div v-click="2" class="ghost-summary">
 <span class="small-stone stored"></span><span class="small-arrow">→</span><span class="small-stone deferred">G</span>
@@ -208,7 +372,7 @@ layout: default
 </TracePlayer>
 
 <!--
-KSS는 Kornerup, Sadun, Soloveichik의 알고리즘이다. SequentialPebble 함수의 실행에서 실제 C++ scheduler가 기록한 동작을 재생한다. 강조 표시는 관찰된 pebble 또는 release 행동을 가리키는 것이며 호출 스택 전체를 표현하지는 않는다. 13개 action의 마지막에는 root가 남고 자식 정점에 ghost가 있다. Source: core/sequential_schedule.hpp; https://doi.org/10.22331/q-2025-02-18-1636.
+KSS는 Kornerup, Sadun, Soloveichik의 알고리즘이다. 제출 논문의 Algorithm 1, Bottom-up root computation SequentialPebble(T)를 pseudocode로 표시했다. Release(u)는 leaf이면 Unpebble(u), 내부 정점이면 Ghost(u)로 풀어 썼다. 실제 scheduler의 trace를 재생하며 각 행동에 대응하는 줄을 강조한다. 13개 action의 마지막에는 root가 남고 자식 정점에 ghost가 있다. Source: submitted manuscript, Algorithm 1; https://doi.org/10.22331/q-2025-02-18-1636.
 -->
 
 ---

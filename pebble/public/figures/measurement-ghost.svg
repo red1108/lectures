@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="205 395 195 175"><!-- Same silhouette as cover-spooky.svg; emphasis color matches the phase factor. --><g id="measurement-ghost">
+  <path d="M302 395C270 395 254 417 251 445C250 457 248 464 238 464L221 462C211 460 205 470 214 478L240 495C246 499 248 503 247 510L242 546C240 557 248 563 258 558L269 552C277 548 283 552 290 559C299 568 308 569 319 559C327 552 334 549 342 553L354 559C365 564 374 558 372 547L366 510C365 503 367 499 374 495L392 484C401 479 399 468 389 468L368 470C357 471 353 466 352 454C350 419 335 395 302 395Z" fill="#a45f3e"/>
+  <ellipse cx="285" cy="440" rx="6" ry="11" fill="#FFFFFF"/>
+  <ellipse cx="319" cy="440" rx="6" ry="11" fill="#FFFFFF"/>
+  <ellipse cx="302" cy="466" rx="7" ry="8" fill="#FFFFFF"/>
+</g></svg>
