@@ -1,6 +1,6 @@
 # Pebbling computations
 
-A 25-slide, 15–20 minute introductory talk using Slidev and the
+A 26-slide, 15–20 minute introductory talk using Slidev and the
 [Bricks theme](https://github.com/slidevjs/themes/tree/main/packages/theme-bricks).
 The slides are in English and presenter notes are in Korean.
 
@@ -72,6 +72,10 @@ The KMRV path slide is retained with `disabled: true` and is omitted from the ta
 Detailed mathematical explanations and source references are in presenter notes.
 The root-computation pseudocode follows Algorithm 1, `SequentialPebble(T)`,
 in the submitted manuscript; its action lines follow the recorded trace.
+The boundary-expansion demo follows Algorithm 2, `Boundary(T, m)`, and the
+`build_boundary` recursion in `sequential.cpp`. It draws a four-level tree
+with a target boundary size of six. Its frontier marks subtree roots being
+split during construction, rather than occupied quantum registers.
 
 ## Circuit figures
 

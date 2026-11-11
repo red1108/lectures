@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
 import {replay, reversible, spooky, type Trace} from '../lib/pebbling.ts'
 import {lineExamples} from '../lib/line-examples.ts'
+import './boundary.test.ts'
 const native = JSON.parse(readFileSync(new URL('../traces/native.json', import.meta.url), 'utf8'))
 for (const [name, t] of Object.entries({...native, reversible, spooky, ...lineExamples})) {
   if (['revision', 'source_sha256', 'source_changes'].includes(name)) continue

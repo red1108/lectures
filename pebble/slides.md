@@ -243,14 +243,14 @@ $$
 \sum_x \alpha_x |x\rangle |f(x)\rangle
 $$
 
-<div v-click="1" class="measurement-result">
+<div v-click="1" class="measurement-result" style="position: relative">
 <div class="measure-arrow">↓ <span>X-basis measurement · outcome m ∈ {0, 1}<sup>k</sup></span></div>
 
 $$
 \sum_x \alpha_x \textcolor{#a45f3e}{(-1)^{m\cdot f(x)}} |x\rangle
 $$
 
-<img class="measurement-ghost" src="/figures/measurement-ghost.svg" alt="Ghost" />
+<img class="measurement-ghost" src="/figures/measurement-ghost.svg" alt="Ghost" width="119.4375" height="107.1875" style="position: absolute; left: calc(50% + 150px); bottom: -21.75px; width: 119.4375px; height: 107.1875px" />
 </div>
 <div v-click="2" class="ghost-summary">
 <span class="small-stone stored"></span><span class="small-arrow">→</span><span class="small-stone deferred">G</span>
@@ -399,7 +399,20 @@ layout: default
 <BlockCleanupIdea />
 
 <!--
-KSS 뒤에 순차 block cleanup의 아이디어를 소개하는 개념도다. root는 출력으로 보존하고 왼쪽 subtree의 2,4,5를 정리할 영역으로 고른다. 각 root-to-leaf 경로를 가로지르는 8,9,10,11이 아래 경계다. 첫 화면에서 영역을 고르고, 다음 버튼으로 경계의 값을 모두 준비한다. 다음에는 경계를 유지하면서 4,5,2 순서로 값을 재계산하고 각 ghost의 위상을 보정한다. 마지막에는 2,4,5 순서로 uncompute하여 영역을 정리한다. 개념도는 각 준비 및 정리 과정을 한 화면으로 묶어 보여준다. 같은 경계값을 유지하여 여러 정점을 연속으로 정리하는 점이 핵심이다. 이후 경계를 해제하고 그 아래에 남은 ghost를 재귀적으로 정리한다. 이 그림은 특정 공간 예산에서 추출한 실행 trace가 아니며, 실제 H=4, 5-register 실행은 다음 장에서 보여준다. 내부 버튼으로 그림을 조작하고 방향키는 페이지 이동에 쓴다.
+KSS 뒤에 순차 block cleanup의 아이디어를 소개하는 개념도다. root는 출력으로 보존하고 왼쪽 subtree의 2,4,5를 정리할 영역으로 고른다. 각 root-to-leaf 경로를 가로지르는 8,9,10,11이 아래 경계다. 첫 화면에서 영역을 고르고, 다음 버튼으로 경계의 값을 모두 준비한다. 다음에는 경계를 유지하면서 4,5,2 순서로 값을 재계산하고 각 ghost의 위상을 보정한다. 마지막에는 2,4,5 순서로 uncompute하여 영역을 정리한다. 개념도는 각 준비 및 정리 과정을 한 화면으로 묶어 보여준다. 같은 경계값을 유지하여 여러 정점을 연속으로 정리하는 점이 핵심이다. 이후 경계를 해제하고 그 아래에 남은 ghost를 재귀적으로 정리한다. 이 그림은 특정 공간 예산에서 추출한 실행 trace가 아니다. 다음 장에서 경계 구성 알고리즘을 설명한 뒤 실제 H=4, 5-register 실행을 보여준다. 내부 버튼으로 그림을 조작하고 방향키는 페이지 이동에 쓴다.
+-->
+
+---
+layout: default
+---
+
+# Boundary expansion
+
+<BoundaryExpansion :height="4" :size="6" />
+
+<!--
+제출 논문의 Algorithm 2, Constructing a balanced boundary Boundary(T,m)와 sequential.cpp의 build_boundary에 대응한다. H=4, 15개 정점의 완전 이진트리에서 m=6으로 설정했다. 초기 경계 {1}을 자식 쪽으로 밀어내며 왼쪽은 ceil(m/2), 오른쪽은 floor(m/2)로 나눈다. 초록색 집합은 재귀 처리 중의 임시 frontier이며 양자 레지스터 점유나 pebbling 실행을 나타내지 않는다. 왼쪽 호출, 오른쪽 호출, base case의 return, 집합의 union을 각 단계에 맞춰 강조한다. 최종 경계는 왼쪽부터 {8,9,5,12,13,7}이고 깊이는 2 또는 3이다. 각 root-to-leaf 경로를 정확히 한 번 가로지른다. 이 단계에서는 경계의 위치만 정하며, 값의 계산과 보존은 Contract 단계에서 수행한다.
+Source: submitted manuscript, Algorithm 2; sequential.cpp, build_boundary.
 -->
 
 ---

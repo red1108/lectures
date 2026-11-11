@@ -175,16 +175,6 @@
   font-size: 1.3em;
   margin: 18px 0;
 }
-.measurement-result {
-  position: relative;
-}
-.measurement-ghost {
-  position: absolute;
-  left: calc(50% + 150px);
-  bottom: -21.75px;
-  width: 119.4375px;
-  height: 107.1875px;
-}
 .measure-arrow {
   font-size: 28px;
   color: #9fb1ae;
