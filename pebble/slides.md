@@ -250,7 +250,7 @@ $$
 \sum_x \alpha_x \textcolor{#a45f3e}{(-1)^{m\cdot f(x)}} |x\rangle
 $$
 
-<img class="measurement-ghost" src="/figures/measurement-ghost.svg" alt="Ghost" width="119.4375" height="107.1875" style="position: absolute; left: calc(50% + 150px); bottom: -21.75px; width: 119.4375px; height: 107.1875px" />
+<img class="measurement-ghost" src="/figures/measurement-ghost.svg" alt="Ghost" width="119.4375" height="107.1875" style="position: absolute; left: calc(50% + 150px); bottom: -21.75px; width: 119.4375px; height: 107.1875px; transform: translateX(100%)" />
 </div>
 <div v-click="2" class="ghost-summary">
 <span class="small-stone stored"></span><span class="small-arrow">→</span><span class="small-stone deferred">G</span>
