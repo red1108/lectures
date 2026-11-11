@@ -130,7 +130,7 @@ svg{display:block;width:100%;height:280px;overflow:visible}
 .boundary-dot{background:#3d7770}.expanded-dot{background:#e4e9e2}
 .boundary-caption{height:32px;display:flex;justify-content:center;align-items:center;margin-top:10px;color:#284b48;font-size:17px;font-variant-numeric:tabular-nums}
 .boundary-controls{display:flex;align-items:center;gap:5px;margin-top:8px}
-.boundary-controls button{border:1px solid #c6d2c8;background:#fffdf7;border-radius:5px;padding:3px 7px;font:12px var(--slidev-font-sans);color:#344e4d;cursor:pointer;min-height:26px}
+.boundary-controls button{border:1px solid #c6d2c8;background:#fffdf7;border-radius:5px;padding:3px 7px;font-size:12px;color:#344e4d;cursor:pointer;min-height:26px}
 .boundary-controls button:hover:not(:disabled){background:#e6f1eb}
 .boundary-controls button:disabled{opacity:.35;cursor:default}
 .boundary-controls input{flex:1;min-width:25px;accent-color:#3d7770;cursor:pointer}
