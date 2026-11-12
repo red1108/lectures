@@ -24,6 +24,8 @@ async function embedPublic(folder) {
   }
 }
 await embedPublic(resolve(root, 'public'))
+html = html.replaceAll('https://cdn.jsdelivr.net/gh/slidevjs/slidev/assets/favicon.png',
+  dataUri(await readFile(resolve(root, 'public/figures/cover-spooky.svg')), 'image/svg+xml'))
 
 // Embed the exact web fonts too, so opening the file does not require a network.
 for (const match of [...html.matchAll(/<link\b[^>]*href="(https:\/\/fonts\.googleapis\.com\/[^" ]+)"[^>]*>/g)]) {
