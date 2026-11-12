@@ -5,21 +5,23 @@ import native from '../traces/native.json'
 import { replay, reversible, spooky, type Trace } from '../lib/pebbling'
 import { lineExamples } from '../lib/line-examples'
 
-const props = withDefaults(defineProps<{ example: string, compact?: boolean, intro?: boolean, introMetrics?: boolean }>(), { compact: false, intro: false, introMetrics: false })
-const kssRoot = (native as any).kss as Trace
+const props = withDefaults(defineProps<{ example: string, compact?: boolean, intro?: boolean, introMetrics?: boolean, foldedPath?: boolean }>(), { compact: false, intro: false, introMetrics: false })
+const kssRoot = (native as any).kss4 as Trace
 const rootRound = kssRoot.rounds.findIndex(r => r.p.includes(1)) + 1
 const traces: Record<string, Trace> = {
   ...(native as any), reversible, spooky, ...lineExamples,
   'kss-root': {...kssRoot, kind: 'kss-root', rounds: kssRoot.rounds.slice(0, rootRound + 2),
-    metrics: undefined, source: 'Native SequentialPebble · H=3 · root phase'},
+    metrics: undefined, source: 'Native SequentialPebble · H=4 · root phase'},
+  'kss-cleanup': { ...kssRoot, kind: 'kss-cleanup' },
 }
 const trace = computed(() => traces[props.example])
 const frames = computed(() => replay(trace.value))
-const step = ref(0)
+const startStep = computed(() => props.example === 'kss-cleanup' ? rootRound + 2 : 0)
+const step = ref(startStep.value)
 const playing = ref(false)
 const speed = ref(1)
 let timer: ReturnType<typeof setInterval> | undefined
-watch(() => props.example, () => { stop(); step.value = 0 })
+watch(() => props.example, () => { stop(); step.value = startStep.value })
 watch(speed, () => {
   if (playing.value) startTimer()
 })
@@ -28,6 +30,16 @@ const total = computed(() => frames.value.length - 1)
 const nodes = computed(() => {
   if (trace.value.graph === 'path') {
     const n = trace.value.length! + 1
+    if (props.foldedPath) {
+      const topCount = Math.ceil(n / 2), bottomCount = n - topCount
+      return Array.from({length:n}, (_,id) => {
+        const upper = id < topCount
+        const column = upper ? id : id - topCount
+        const spacing = 610 / ((upper ? topCount : bottomCount) - 1)
+        const x = upper ? 45 + column * spacing : 655 - column * spacing
+        return {id, x, y: upper ? 65 : 195}
+      })
+    }
     return Array.from({length:n}, (_,i) => ({id:i, x:55+i*590/(n-1), y:148}))
   }
   const h = trace.value.height!, n = 2**h - 1
@@ -41,6 +53,7 @@ const edges = computed(() => trace.value.graph === 'path'
   : nodes.value.slice(1).map(n => ({a:nodes.value[Math.floor(n.id/2)-1], b:n})))
 const radius = computed(() => trace.value.height === 4 ? 17 : 20)
 const label = computed(() => {
+  if (props.example === 'kss-cleanup' && step.value === startStep.value) return 'Cleanup'
   if (step.value === 0) return trace.value.initial.includes(0) ? 'Fixed initial pebble on 0' : 'Empty configuration'
   const a = frame.value.actions
   const pieces = []
@@ -51,7 +64,7 @@ const label = computed(() => {
 })
 function stop() { playing.value = false; if(timer) clearInterval(timer); timer=undefined }
 function setStep(target:number) {
-  step.value = Math.max(0, Math.min(total.value, target))
+  step.value = Math.max(startStep.value, Math.min(total.value, target))
 }
 function jump(delta:number) { stop(); setStep(step.value + delta) }
 function releaseFocus(event: MouseEvent) {
@@ -66,14 +79,14 @@ function startTimer() {
 }
 function toggle() {
   if (playing.value) return stop()
-  if (step.value === total.value) setStep(0)
+  if (step.value === total.value) setStep(startStep.value)
   playing.value = true
   startTimer()
 }
 onSlideLeave(stop)
 onBeforeUnmount(stop)
 const badge = (id:number) => frame.value.state[id] === 'ghost' ? 'G' : String(id)
-const activated = (id:number) => frame.value.actions.p.includes(id) || frame.value.actions.u.includes(id) || frame.value.actions.g.includes(id)
+const activated = (id:number) => step.value > startStep.value && (frame.value.actions.p.includes(id) || frame.value.actions.u.includes(id) || frame.value.actions.g.includes(id))
 function directedEdge(edge: {a: {x:number,y:number}, b: {x:number,y:number}}) {
   const start = trace.value.graph === 'path' ? edge.a : edge.b
   const end = trace.value.graph === 'path' ? edge.b : edge.a
@@ -110,7 +123,7 @@ function directedEdge(edge: {a: {x:number,y:number}, b: {x:number,y:number}}) {
       <button type="button" @click.stop="jump(-1)" aria-label="Previous step">←</button>
       <button type="button" @click.stop="toggle" :aria-label="playing ? 'Pause trace' : 'Play trace'">{{ playing ? 'Pause' : 'Play' }}</button>
       <button type="button" @click.stop="jump(1)" aria-label="Next step">→</button>
-      <input type="range" min="0" :max="total" :value="step" aria-label="Trace step" tabindex="-1" @input="stop();setStep(Number(($event.target as HTMLInputElement).value))" @click.stop="($event.target as HTMLInputElement).blur()" @pointerup="($event.target as HTMLInputElement).blur()" />
+      <input type="range" :min="startStep" :max="total" :value="step" aria-label="Trace step" tabindex="-1" @input="stop();setStep(Number(($event.target as HTMLInputElement).value))" @click.stop="($event.target as HTMLInputElement).blur()" @pointerup="($event.target as HTMLInputElement).blur()" />
       <div class="speed-controls" role="group" aria-label="Playback speed">
         <button v-for="rate in [1, 2, 4]" :key="rate" type="button"
           :aria-label="`Playback speed ${rate}x`" :aria-pressed="speed === rate"

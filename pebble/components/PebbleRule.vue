@@ -30,7 +30,7 @@ function toggle(vertex: number) {
 
 <template>
   <div class="pebble-rule" @click.stop @click.capture="($event.target as HTMLElement).closest<HTMLElement>('button')?.blur()">
-    <p class="meaning">Pebble = stored value</p>
+    <p class="meaning">Pebble = quantum register, Arrow = computation dependency</p>
     <p class="goal"><span aria-hidden="true">🎯</span> GOAL: Compute the final value and clear all other pebbles.</p>
     <div class="chain">
       <svg viewBox="0 0 760 160" aria-hidden="true">
@@ -69,7 +69,7 @@ function toggle(vertex: number) {
   font-family: var(--slidev-font-sans);
 }
 .meaning {
-  font-size: 24px;
+  font-size: 22px;
   color: #4d6c65;
   margin: 0;
 }

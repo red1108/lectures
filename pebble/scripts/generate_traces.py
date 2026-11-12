@@ -49,14 +49,15 @@ def main():
     compile_one(ROOT / 'scripts/kmrv_trace.cpp', BUILD / 'kmrv_trace', [REPO / 'cli', REPO / 'core'])
     traces = {kind: tree_run(kind, 3, 4) for kind in ('kss', 'sequential', 'parallel')}
     traces['kss4'] = tree_run('kss', 4, 5)
+    traces['parallel4'] = tree_run('parallel', 4, 5)
     traces['sequential4'] = tree_run('sequential', 4, 5)
     # KMRV is the paper's retained-endpoint prefix-path schedule. The anchor
     # is a permanent pebble; preparation of actual input values is not shown.
-    length = 7
-    kmrv = json.loads(subprocess.check_output([str(BUILD / 'kmrv_trace'), str(length)], text=True))
-    traces['kmrv'] = {'kind': 'kmrv', 'graph': 'path', 'length': length,
-                      'initial': [0], 'rounds': kmrv,
-                      'source': 'KMRV retained-endpoint path; anchor fixed; inputs excluded'}
+    for length, key in ((7, 'kmrv'), (16, 'kmrv16')):
+        kmrv = json.loads(subprocess.check_output([str(BUILD / 'kmrv_trace'), str(length)], text=True))
+        traces[key] = {'kind': key, 'graph': 'path', 'length': length,
+                       'initial': [0], 'rounds': kmrv,
+                       'source': 'KMRV retained-endpoint path; anchor fixed; inputs excluded'}
     traces['revision'] = subprocess.check_output(['git', '-C', str(REPO), 'rev-parse', 'HEAD'], text=True).strip()
     tracked = ['core/quantum_computer.hpp', 'core/pebbling_common.hpp',
                'core/sequential_schedule.hpp', 'core/complete_tree_schedule.hpp',
@@ -72,7 +73,7 @@ def main():
     end = source.index('\ntemplate<class Computer>\nvoid contract(', start)
     (ROOT / 'snippets').mkdir(exist_ok=True)
     (ROOT / 'snippets/sequential_pebble.cpp').write_text(source[start:end].rstrip() + '\n')
-    for key in ('kss', 'sequential', 'parallel', 'kss4', 'sequential4', 'kmrv'):
+    for key in ('kss', 'sequential', 'parallel', 'kss4', 'sequential4', 'parallel4', 'kmrv', 'kmrv16'):
         print(f'{key}: {len(traces[key]["rounds"])} steps')
 
 

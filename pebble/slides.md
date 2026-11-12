@@ -69,6 +69,19 @@ $$
 
 </div>
 <div class="computation-reference">Optimal parallel depth (KMRV, EUROCRYPT 2026).</div>
+<svg class="computation-pebble-chain" viewBox="0 0 760 110" role="img" aria-label="Five pebbles in a chain, starting with x, with successive arrows labeled f1, f2, f3, and f4.">
+  <defs>
+    <marker id="computation-chain-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#82999a" />
+    </marker>
+  </defs>
+  <g v-for="i in 4" :key="`edge-${i}`">
+    <line :x1="70 + (i - 1) * 155 + 26" y1="67" :x2="70 + i * 155 - 29" y2="67" marker-end="url(#computation-chain-arrow)" />
+    <text class="function-label" :x="70 + (i - .5) * 155" y="42" text-anchor="middle">f<tspan class="function-index" baseline-shift="sub">{{ i }}</tspan></text>
+  </g>
+  <circle v-for="i in 5" :key="`pebble-${i}`" :cx="70 + (i - 1) * 155" cy="67" r="25" />
+  <text class="input-label" x="70" y="67" text-anchor="middle" dominant-baseline="central">x</text>
+</svg>
 </div>
 
 <!--
@@ -93,16 +106,14 @@ $$
 <div class="computation-addition">
 
 $$
-\begin{aligned}
-&|x_1\rangle\cdots|x_n\rangle|0\rangle\\
-&\quad\longmapsto
-|x_1\rangle\cdots|x_n\rangle
-|x_1+\cdots+x_n\rangle
-\end{aligned}
+|x_1\rangle\cdots|x_n\rangle|0\rangle
+\longmapsto
+|x_1\rangle\cdots|x_n\rangle|x_1+\cdots+x_n\rangle
 $$
 
 </div>
 <div class="computation-scope">We study computations with binary-tree dependencies.</div>
+<img class="binary-computation-figure" src="/figures/binary_pebbling_concept.png" alt="Binary-tree pebbling configuration from our paper, showing pebbles, ghosts, and the root goal." />
 </div>
 
 <!--
@@ -200,8 +211,8 @@ layout: default
 
 # Pebbling a line
 
-<div class="visual-intro">
-<div class="intro-line">Compute → keep the output → uncompute</div>
+<div class="visual-intro simple-line-intro">
+<div class="intro-line">Compute → keep the final value → uncompute</div>
 <TracePlayer example="line-simple" intro intro-metrics />
 </div>
 
@@ -215,8 +226,9 @@ layout: default
 
 # Reversible pebbling on a line
 
-<div class="visual-intro">
-<div class="intro-line">Save a checkpoint. Recompute when needed.</div>
+<div class="space-limited-question"><strong>What happens if space is limited?</strong> we need more work! (of course)</div>
+
+<div class="visual-intro reversible-line-intro">
 <TracePlayer example="line-reversible" intro />
 <div class="intro-caption">8 → 4 registers <span>15 → 27 actions</span></div>
 </div>
@@ -268,9 +280,9 @@ layout: default
 clicks: 3
 ---
 
-# Correcting the phase
+# Exorcise: Correcting the phase
 
-<div class="correction-math">
+<div class="correction-math exorcism-math">
 <div class="correction-identity">
 
 $Z(m)=\bigotimes_{j=1}^k Z^{m_j}\qquad Z(m)|y\rangle=(-1)^{m\cdot y}|y\rangle$
@@ -304,15 +316,21 @@ $$
 $$
 
 </div>
-<div v-click="3" class="ghost-summary correction-summary">
-<span class="small-stone deferred">G</span><span class="small-arrow">→</span><span class="small-stone stored"></span><span class="small-arrow">→</span><span class="small-stone empty"></span>
-<span>Recompute + correct → uncompute</span>
+<div class="exorcism-illustration">
+<img class="exorcism-ghost" src="/figures/measurement-ghost.svg" alt="Ghost" />
+<img class="exorcism-priest" src="/figures/exorcist.svg" alt="Priest holding a cross toward the ghost" />
+</div>
+<div class="exorcism-references">
+<a href="https://arxiv.org/abs/1212.5069" target="_blank" rel="noopener noreferrer" title="Low-overhead constructions for the fault-tolerant Toffoli gate">Jones (2013)</a>
+<span> · </span>
+<a href="https://arxiv.org/abs/1709.06648" target="_blank" rel="noopener noreferrer" title="Halving the cost of quantum addition">Gidney (2018)</a>
 </div>
 </div>
 
 <!--
 약 90초. 직전 장에서 ghosting한 값의 입력 x가 다시 준비되어 있다고 가정한다. Fresh register는 재사용할 k큐비트 |0^k> 보조 레지스터다. U_f|x>|y>=|x>|y XOR f(x)> 로 정의한다. 첫 클릭에서 f(x)를 다시 계산한다. 두 번째 클릭에서는 결과 레지스터의 j번째 큐비트에 Z^{m_j}를 적용한다. Z(m)=⊗_j Z^{m_j}가 (-1)^{m·f(x)}를 한 번 더 곱하므로 기존 위상이 상쇄된다. 이 시점에서 ghost가 pebble로 바뀐다. 논문의 Peb는 이 재계산과 위상 보정을 함께 포함한다. 마지막 클릭에서 U_f^dagger로 보조 레지스터를 |0^k>으로 되돌리면 정점은 empty가 된다. 이는 별도의 Unp 동작이다. x가 여러 입력 레지스터를 뜻하면 재계산과 uncompute에는 이들이 모두 있어야 한다. Ghosting 자체는 이 입력들을 요구하지 않으므로 더 일찍 양자 메모리를 해제할 수 있다. Ghost의 측정 결과 m은 보정이 끝나면 버릴 수 있다.
 Source: current manuscript, Section 2, ghosting and phase correction; https://algassert.com/post/1905.
+Related measurement-assisted constructions: Cody Jones, Low-overhead constructions for the fault-tolerant Toffoli gate, Physical Review A 87, 022328 (2013), https://arxiv.org/abs/1212.5069. Craig Gidney, Halving the cost of quantum addition, Quantum 2, 74 (2018), https://arxiv.org/abs/1709.06648.
 -->
 
 ---
@@ -332,12 +350,17 @@ Source: current manuscript, Section 2. Circuit drawn for this presentation.
 layout: default
 ---
 
-# Spooky pebbling on the same line
+# Spooky pebbling on a line graph
 
-<div class="visual-intro">
-<div class="intro-line">Leave ghosts. Return to correct them.</div>
+<div class="visual-intro spooky-line-intro">
+<div class="intro-line">We have new actions! Ghosting / Exorcising</div>
+<div class="spooky-line-cost">
+
+Space: $O(1)$, Work: $O(n^2)$
+
+</div>
 <TracePlayer example="line-spooky" intro />
-<div class="intro-caption">Space budget: 3</div>
+
 </div>
 
 <!--
@@ -348,7 +371,7 @@ layout: default
 layout: default
 ---
 
-# Binary-tree dependencies
+# Binary-tree dependencies (Recap)
 
 <div class="visual-intro">
 <div class="intro-line">Both children present → toggle the parent</div>
@@ -365,29 +388,31 @@ layout: default
 
 # KSS: compute the root
 
-<TracePlayer example="kss-root">
+<TracePlayer example="kss-root" class="root-computation-demo">
 <template #code="{ step }">
 <StepCode :clicks="step" />
 </template>
 </TracePlayer>
 
 <!--
-KSS는 Kornerup, Sadun, Soloveichik의 알고리즘이다. 제출 논문의 Algorithm 1, Bottom-up root computation SequentialPebble(T)를 pseudocode로 표시했다. Release(u)는 leaf이면 Unpebble(u), 내부 정점이면 Ghost(u)로 풀어 썼다. 실제 scheduler의 trace를 재생하며 각 행동에 대응하는 줄을 강조한다. 13개 action의 마지막에는 root가 남고 자식 정점에 ghost가 있다. Source: submitted manuscript, Algorithm 1; https://doi.org/10.22331/q-2025-02-18-1636.
+KSS는 Kornerup, Sadun, Soloveichik의 알고리즘이다. 제출 논문의 Algorithm 1, Bottom-up root computation SequentialPebble(T)를 pseudocode로 표시했다. Release(u)는 leaf이면 Unpebble(u), 내부 정점이면 Ghost(u)로 풀어 썼다. 실제 scheduler의 trace를 재생하며 각 행동에 대응하는 줄을 강조한다. 29개 action의 마지막에는 root가 남고 아래 내부 정점 2~7에 ghost가 있다. Source: submitted manuscript, Algorithm 1; https://doi.org/10.22331/q-2025-02-18-1636.
 -->
 
 ---
 layout: default
 ---
 
-# KSS in action
+# Full KSS algorithm
 
-<div class="split-demo"><div>
-<div class="lead small">Keep the root.<br>Clear the ghosts.</div>
-<p class="demo-budget">Height = 4<br>Space = 5</p>
-</div><div><TracePlayer example="kss4" /></div></div>
+<TracePlayer example="kss-cleanup" class="cleanup-computation-demo">
+<template #code="{ step }">
+<CleanupCode :step="step" />
+</template>
+</TracePlayer>
 
 <!--
-여기서 각 단계는 원고에 사용한 C++ 스케줄러에서 추출한 실제 trace다. 이후 block cleanup과 같은 H=4 트리와 같은 5개 레지스터 예산을 사용한다. 종료 시 root만 남고 ghost는 없어야 한다. Ghost-only actions are counted in steps, not work.
+앞 장과 같은 Height 4, Space 5 트리다. SequentialPebble이 끝난 native trace의 29/81 상태에서 시작하며 root 1은 pebble, 2~7은 ghost, 8~15는 empty다. work와 peak는 전체 KSS 실행의 누적 수치이며 시작 work=23, peak=5다. 슬라이더와 Reset은 이 시작점으로 돌아온다. 전체 native trace는 81 actions, work 71로 끝난다.
+왼쪽 KSS 호출에서 Pebble(T)는 이미 완료한 부분이다. Cleanup(T_2), Cleanup(T_3)을 재생한다. 밝은 강조는 현재 cleanup 호출에서 실행하는 줄이며 어두운 강조는 현재 호출을 포함하는 재귀 호출이다. Pebble 내부의 여러 연산은 이를 호출한 prepare-left 또는 prepare-right 줄에 대응한다. 이 매핑은 C++의 호출 순서를 따라가며 각 p/u/g 동작을 실제 native trace와 대조한다. 여기서는 leaf에 ghost를 남기지 않는 KSS 실행이므로 leaf cleanup은 즉시 반환한다. Correct(v)는 값을 재계산하고 위상을 보정하는 Peb 동작이다. Release는 leaf이면 Unpebble, 내부 정점이면 Ghost다.
 -->
 
 ---
@@ -490,6 +515,7 @@ $$
 
 ---
 layout: default
+class: complete-tree-result
 ---
 
 # The complete-tree result
@@ -499,12 +525,30 @@ layout: default
 | Schedule | Work |
 |:--|:--|
 | KSS | $O(n\log n)$ |
-| Block cleanup | $\Theta(n\log n/\log\log n)$ |
+| **Ours** | $\boldsymbol{\Theta(n\log n/\log\log n)}$ |
 
-<div class="takeaway">Block cleanup achieves optimal work up to constant factors (Theorem 1.1).</div>
+<div class="space-work-tradeoff">
+
+$$
+W(n,s)=\Theta\!\left(\frac{n\log n}{\log s}\right),\qquad H+1\le s\le n
+$$
+
+<div class="space-case">
+
+Minimum space $s=H+1=\log_2(n+1)+1$.
+
+</div>
+<div class="space-case">
+
+Full space $s=n\quad\Longrightarrow\quad W(n,n)=\Theta\!\left(\dfrac{n\log n}{\log n}\right)=\Theta(n)$.
+
+</div>
+<div class="space-work-reference">Theorem 1.1</div>
+</div>
 
 <!--
 KSS의 steps에는 ghosting이 포함된다. 우리의 work는 pebble과 unpebble 횟수다. 두 convention은 완전한 schedule에서 최대 상수배만 차이 나므로 점근적 비교에 문제가 없다. 전체 feasible space에서 최적 work는 Theta(nH/log(s+1))다. 병렬 depth도 별도로 최적화하며, 어떤 budget에서는 최적 depth가 work만 최소화할 때보다 더 많은 work를 요구한다. Source: current manuscript, Theorems 1.1, 3.4, and 4.3.
+일반 공간 s에서의 식은 논문 Theorem 1.1의 Theta(nH/log(s+1))를 H=Theta(log n), log(s+1)=Theta(log s)로 바꿔 쓴 것이다. 최소 공간은 정확히 H+1=log2(n+1)+1이며 표는 이 경우의 비교다. s=n이면 모든 정점을 한 번씩 계산하고 root를 제외한 정점을 위에서 아래로 uncompute할 수 있어 2n-1 work다. 일반식도 Theta(n log n/log n)=Theta(n)으로 이 경우와 일치한다.
 -->
 
 ---
@@ -526,15 +570,290 @@ layout: default
 layout: default
 ---
 
+# Parallel computation
+
+<img class="parallel-computation-circuit" src="/figures/parallel-computation.svg" alt="Eight-qubit circuit with eight CCZ gates grouped into four parallel depths. Gates within each depth act on disjoint qubits." />
+
+<div class="parallel-computation-explanation">
+<p>In principle, gates on disjoint qubits can run simultaneously.</p>
+<p>Parallel depth models the execution time.</p>
+</div>
+
+<!--
+8큐비트, 8개 CCZ 연산을 4개 depth로 묶은 예다. Depth 1은 CCZ(1,2,5)와 CCZ(3,4,8), Depth 2는 CCZ(2,7,8)와 CCZ(3,5,6)이다. 추가한 Depth 3은 CCZ(1,4,7)와 CCZ(2,5,6), Depth 4는 CCZ(1,3,6)와 CCZ(4,5,8)이다. 각 depth 내부의 두 연산은 사용하는 큐비트가 겹치지 않는다. 세 filled dot을 연결한 것이 CCZ 하나이며, 수평 wire와 교차하더라도 dot이 없는 큐비트는 해당 연산에 포함되지 않는다.
+
+같은 depth 안의 게이트 두 개는 세로 제어선이 겹쳐 하나의 게이트로 보이는 것을 피하기 위해 가로로 어긋나게 그렸다. 색칠한 한 영역 전체가 하나의 depth다. 이 예시는 CCZ를 한 단위시간의 primitive로 취급하고 서로 다른 큐비트에 대한 연산을 동시에 실행할 하드웨어 자원을 가정한다. 실제 wall-clock 시간은 native gate 분해, 연결성, gate duration, 제어 자원 등의 영향도 받는다. 이 가정 아래 serial gate count는 8, parallel depth는 4다. 가능한 양자컴퓨터의 병렬 실행을 이론적으로 모델링하는 목적이라고 설명한 뒤 다음 장의 disjoint active sets로 연결한다.
+
+회로는 LaTeX Quantikz로 작성했다. 소스는 scripts/parallel_computation.tex, 재생성 명령은 bash scripts/build_parallel_circuit.sh다. Quantikz documentation: https://ctan.org/pkg/quantikz.
+-->
+
+---
+layout: default
+class: kmrv-line-demo
+---
+
+# KMRV on a line graph
+
+<div class="kmrv-line-cost">
+
+$n=16$ · Space: $O(\log n)$ · Depth: $2n-1$
+
+</div>
+<TracePlayer example="kmrv16" folded-path />
+<div class="kmrv-line-reference"><a href="https://arxiv.org/abs/2510.08432">KMRV · EUROCRYPT 2026</a></div>
+
+<!--
+KMRV Algorithms 2.2 and 2.3 blast/unblast implementation, cli/kmrv.cpp. n denotes the 16 edges / computed vertices 1–16 after the fixed anchor 0, so there are 17 circles. The original visit-and-clean task has depth 2n. Here the endpoint is retained by omitting its final uncomputation, giving exactly 2n-1=31 rounds. This is depth, not work. The counters show actual computations and uncomputations, including parallel jobs in one round. Ghosting is zero work in our manuscript convention. Path layout folds once at the right; arrows continue from 8 to 9 and return to 16 at bottom left. Highlighted operations in the same frame execute in the same round.
+Source: https://arxiv.org/abs/2510.08432, Algorithms 2.2–2.3; native kmrv_path(16).
+-->
+
+---
+layout: default
+---
+
+# Parallel cleanup
+
+<ParallelForestIdea />
+
+<!--
+약 40초. 높이 5인 전체 트리 31정점을 고정하고, 한 batch에서 실제 정리할 block과 그 입력을 유지하는 boundary를 표시한다. 모든 정점의 번호를 적고 caption에 Clear 대상으로 명시한다. 위치와 모양은 끝까지 동일하다. 출력 root는 트리 맨 위에 보존한다. 처음에는 parallel root computation이 끝난 상태로 root 1만 pebble이고 2~31은 모두 ghost다. 각 다음 버튼으로 현재 block의 작업을 마치면 그 block의 ghost가 사라지고 다음 batch를 강조한다. 정리된 정점은 빈 원으로 남겨 전체 트리 위치를 유지한다. 개별 round가 아니라 batch 전후의 상태를 나타내는 개념도이며, 다음 실제 trace 페이지에서 세부 동작을 보여준다.
+
+Algorithm 6의 H=5, s=9, cleanup 공간 b=8인 예시다. 먼저 높이 4인 두 subtree T_2와 T_3를 a=1,c=8로 하나씩 처리한다. 최대 feasible cut은 k=2이므로 각 subtree의 위쪽 두 층을 정리한 뒤 높이 2인 subtree 여덟 개 T_8,...,T_15가 남는다. 그다음 p(2)=3이고 a=floor(8/3)=2,c=4이므로 [8,9], [10,11], [12,13], [14,15]를 두 개씩 동시에 정리한다. 이들은 전체 3정점이 각 할당 공간에 들어가므로 terminal cleanup이다. 처음에는 2,4,5 block을 강조하고 8,9,10,11 boundary를 금색으로 표시한다. 다음에는 3,6,7 block과 12,13,14,15 boundary다. 이후 높이 2인 terminal job들은 세 정점 전체를 정리하므로 해당 정점들을 모두 강조한다. 서로 다른 색의 두 영역은 동시에 수행하는 독립 job이다. 마지막은 강조 영역이 없어지고 root만 출력으로 보존된다. 경계의 금색 표시는 다음 작업에 사용할 boundary 위치다. 준비 단계에서 해당 값을 재계산해 유지하고, block 정리가 끝나면 내부 boundary root를 다시 ghost로 해제하므로 그 아래 ghost들은 다음 batch까지 남는다. leaf를 포함한 모든 초기 ghost가 마지막 batch 뒤에는 제거된다.
+
+큰 subtree를 하나씩 처리한 뒤 작은 subtree에 공간을 다시 나눠 두 개씩 처리한다는 아이디어를 설명한다. 예전 H=9의 메모리 막대와 동적으로 재배치한 forest 대신 전체 의존성 트리를 고정하여 설명한다. 모든 준비와 정리 동작을 한 round에 수행한다는 뜻은 아니며, 각 영역에서의 block contraction을 한 개념 단계로 표시한다.
+Source: Algorithm 6 and equations (10)–(11) of our paper.
+-->
+
+---
+layout: default
+---
+
 # Parallel spooky pebbling
 
 <div class="split-demo"><div>
 <div class="lead small">Operations on disjoint registers run in parallel.</div>
-<p class="demo-budget">Height = 3<br>Space = 4</p>
-</div><div><TracePlayer example="parallel" /></div></div>
+<p class="demo-budget">Height = 4<br>Space = 5</p>
+</div><div><TracePlayer example="parallel4" /></div></div>
 
 <!--
-우리 병렬 forest-stage 알고리즘에서 직접 수집한 trace이다. 첫 단계에서는 정점과 그 입력을 포함한 active set이 겹치지 않아야 한다. 둘째 단계에서는 ghosting을 한다. 한 칸의 step은 개별 연산이 아니라 두 단계 round다. 한 단계에 여러 pebble 또는 ghost가 표시될 수 있다. Source: https://arxiv.org/abs/2510.08432
+우리 병렬 forest-stage 알고리즘에서 직접 수집한 trace이다. 첫 단계에서는 정점과 그 입력을 포함한 active set이 겹치지 않아야 한다. 둘째 단계에서는 ghosting을 한다. 한 칸의 step은 개별 연산이 아니라 두 단계 round다. 한 단계에 여러 pebble 또는 ghost가 표시될 수 있다. Source: our paper, Algorithm 6; native C++ trace at commit d508128
+-->
+
+---
+layout: default
+class: parallel-analysis
+---
+
+# Complexity analysis: Memory per subtree
+
+<div class="analysis-context">
+
+Height $h$ · budget $b\ge h+1$
+
+</div>
+<div class="subtree-cost">
+
+$$
+D_{\mathrm{block}}=O\!\left(h+\frac{2^h}{b}\right)
+$$
+
+</div>
+<div class="block-cost-explanation">
+
+Dependencies require at least $h$ rounds, while $\Theta(2^h)$ node evaluations at $O(b)$ per round give the $2^h/b$ term.
+
+</div>
+<div class="target-budget">
+
+$$
+b\ge p(h)=\Theta\!\left(\frac{2^h}{h}\right)
+\quad\Longrightarrow\quad
+D_{\mathrm{block}}=O(h)
+$$
+
+</div>
+<div class="analysis-reference">Lemma 3.6 · Target budget in equation (10)</div>
+
+<!--
+약 35초. 이 페이지는 원고 Lemma 3.6처럼 h를 한 subtree의 높이, b를 이 subtree에 할당한 register 수로 쓴다. 다음 페이지에서는 같은 메모리 배분 논의를 남은 높이 t와 job별 할당량 c로 표현한다. Lemma 3.6이 주는 한 번의 block contraction depth는 O(h+2^h/b)이며 feasible cut이 전제다. 재귀적으로 남은 subtree들을 모두 정리한 전체 depth가 아니라 한 block을 처리하는 비용이다.
+
+문장은 두 항의 병목 직관을 설명한다. dependency chain을 따라가려면 높이에 비례하는 rounds가 필요하다. 평가할 정점은 2^h-1=Theta(2^h)개이고 한 round에서 b개 registers로 동시에 처리 가능한 연산 수는 O(b)이므로 throughput에 따른 2^h/b 항이 나타난다. 이 두 병목은 필요한 시간의 하한을 직관적으로 설명하며, 이를 상한으로 달성한다는 사실은 별도로 증명한 Sweep와 parallel block-cleanup 분석 (Lemmas 3.5–3.6)에 근거한다. 매 round가 균일하게 b개의 연산을 수행한다고 가정하는 것은 아니고 전체 스케줄을 상각 분석한다.
+
+target p(h)는 정확히 max{h+1,ceil(2^h/h)} (h>=2), p(1)=1이다. 따라서 p(h)=Theta(2^h/h)이고 b>=p(h)이면 이 subtree의 block을 O(h) rounds에 처리할 수 있다. 남은 메모리는 다른 독립 subtree를 동시에 실행하는 데 배분한다. bounded height에서 feasibility를 보장하는 max 항은 말로 설명한다.
+Source: Lemmas 3.5–3.6; equation (10).
+-->
+
+---
+layout: default
+class: parallel-analysis regime-height-detail
+---
+
+# Complexity analysis: Two cleanup regimes
+
+<div class="analysis-context">
+
+Current subtree height $h$ · cleanup space $b=s-1$
+
+</div>
+<div class="cleanup-regimes">
+<div>
+<h3>Space-limited</h3>
+
+$b<p(h)$
+
+One subtree per batch, $c=b$
+
+$$
+O\!\left(\frac{H}{\log(b+1)}\right)\text{ stages}
+$$
+
+</div>
+<div>
+<h3>Space-rich</h3>
+
+$b\ge p(h)$
+
+Per subtree $c\ge p(h)$
+
+Can clear $t=h-\log_2 h-O(1)$ levels.
+
+$$
+2^t\asymp \frac{2^h}{h}
+$$
+
+$$
+\underbrace{h}_{\text{current height}}
+\;\longrightarrow\;
+\underbrace{h-t=O(\log h)}_{\text{remaining height}}
+$$
+
+$$
+O(1+\log^*H)\text{ stages}
+$$
+
+</div>
+</div>
+<div class="analysis-reference">Lemma 3.3 · Theorem 3.7 proof</div>
+
+<!--
+약 45초. H는 원래 전체 트리 높이, h는 현재 subtree 높이, t는 한 stage에서 정리하는 block의 층수다. 공간이 부족한 구간에서는 p(h)>b라 한 번에 한 subtree만 처리하고 c=b를 준다. 가능한 가장 큰 cut을 선택한다. 특히 최소 공간 초반에는 cut이 얕을 수 있다. 모든 stage가 처음부터 Theta(log b)층을 제거한다고 말하지 않는다. Lemma 3.3이 초기 구간을 포함한 전체 stage 수 O(H/log(b+1))를 준다.
+
+p(h)<=b가 되면 a=min{A,floor(b/p(h))}개 subtree를 동시에 실행하고 각자 c=floor(b/a)>=p(h)를 받는다. A가 작으면 a=A다. 공간을 균등하게 재배분하므로 남은 forest의 높이도 공통으로 유지된다. 이후 p(h)는 높이가 줄수록 감소하므로 space-rich 조건은 유지된다.
+
+높이 h에서 t=h-ceil(log2 h)-2개 층을 정리하는 cut을 고려한다. 경계 m=2^t=Theta(2^h/h)이고 남은 높이는 h-t=ceil(log2 h)+2다. 충분히 큰 h에서 m,h-t<=2^h/(4h)이므로 m+(h-t)<=c와 2m-1<=c를 동시에 만족한다. 따라서 화면의 t=h-log2 h-O(1)개 층을 실제로 정리할 수 있다. 알고리즘은 가장 깊은 feasible cut을 택하므로 실제 남은 높이는 이보다 클 수 없다. h→O(log h)를 반복하면 O(1+log*H) stages다. 상수 높이는 별도의 상수 개 terminal stages로 처리한다.
+Source: Lemma 3.3; proof of Theorem 3.7.
+-->
+
+---
+layout: default
+class: parallel-analysis
+---
+
+# Complexity analysis: Depth of one stage
+
+<div class="analysis-context">
+
+Space-rich stage · height $h$
+
+</div>
+<div class="stage-cancellation">
+
+$$
+\underbrace{\frac{n/2^h}{bh/2^h}}_{\text{batches}}
+\cdot
+\underbrace{h}_{\text{rounds per batch}}
+=\frac nb
+$$
+
+</div>
+<div class="stage-critical-path">
+
+One batch still takes $O(h)$ rounds.
+
+$$
+D_{\mathrm{stage}}=O\!\left(h+\frac nb\right)
+$$
+
+</div>
+<div class="analysis-reference">Equation (14)</div>
+
+<!--
+약 40초. 먼저 space-rich 구간의 cancellation 직관을 설명한다. 한 subtree에는 Theta(2^h)개 정점이 있고, 전체 subtree 수는 A=Theta(n/2^h)다. subtree 하나에 p(h)=Theta(2^h/h) registers를 주면 O(h) rounds에 처리한다. 동시 처리 용량은 대략 b/p(h)=Theta(bh/2^h)개다. 용량이 A보다 작을 때 batch 수×batch당 depth가 n/b로 상쇄된다. 실제 batch 수는 적어도 하나이므로 critical-path O(h) 항이 추가된다. floors와 A에 의한 cap은 이 O(h+n/b) 안에 포함된다.
+
+전체 regime에 통일된 식 (14)의 증명은 a개 동시 job, c=floor(b/a), A개 총 job에서 O((A/a)(h+2^h/c))=O(A*h/a+A*2^h/b)로 쓴다. target 선택이 A*h/a=O(h+n/b)를 보장하고 A*2^h=O(n)이다. space-limited에서도 a=1,c=b이고 p(h)>b 및 b>=h+1로부터 h<=O(n/b)여서 이 식이 성립한다. 화면에는 space-rich 계산만 두고, 같은 bound가 두 구간에 적용된다는 점을 말로 연결한다.
+Source: equation (14), forest-stage depth, in the proof of Theorem 3.7.
+-->
+
+---
+layout: default
+class: parallel-analysis parallel-upper-sum
+---
+
+# Complexity analysis: Parallel depth upper bound
+
+| Regime | Total depth |
+|:--|:--|
+| Space-limited | $O\!\left(\dfrac{nH}{b\log(b+1)}\right)$ |
+| Space-rich | $O\!\left(H+\dfrac{n(1+\log^*H)}b\right)$ |
+
+<div class="budget-substitution">
+
+$b=s-1=\Theta(s)$
+
+</div>
+
+$$
+D=O\!\left(H+\frac ns\left(\frac H{\log(s+1)}+1+\log^*H\right)\right)
+$$
+
+<div class="analysis-reference">Theorem 3.7</div>
+
+<!--
+약 40초. 공간 부족 구간에서는 O(H/log(b+1)) stages이고 매 stage의 depth가 O(n/b)여서 첫 행을 얻는다. 공간 여유 구간에서는 stage 수 O(1+log*H), 각 stage depth O(t+n/b)다. 남은 높이가 t→ceil(log t)+2로 줄어들므로 높이들의 합은 O(H)이며, 이를 매 stage의 H로 상계해서 H log*H를 붙이지 않도록 주의한다. 따라서 둘째 행은 O(H+n(1+log*H)/b)다.
+
+첫 root computation Sweep(H,s)는 O(H+n/s) depth다. 이를 함께 더하고 b=s-1=Theta(s), log b=Theta(log(s+1))를 사용하면 Theorem 3.7의 upper bound다. 다음 최적 depth 페이지의 max{H/log(s+1),1+log*H}와 여기의 두 항의 합은 최대 상수 2배 차이이므로 같은 asymptotic order다. 전체 feasible range에서는 depth-optimal schedule의 work가 work-optimal schedule보다 더 클 수 있으며, 이 분석이 두 최적값의 동시 달성을 주장하는 것은 아니다.
+Source: Theorem 3.7; main optimal-depth result Theorem 1.1.
+-->
+
+---
+layout: default
+class: parallel-depth-result
+---
+
+# Complexity analysis: Optimal parallel depth
+
+<div class="parallel-minimum-space">
+
+Complete tree $n=2^H-1$ · minimum space $s=H+1$
+
+</div>
+
+| Schedule | Depth (Time) |
+|:--|:--|
+| KSS (sequential) | $O(n\log n)$ |
+| Ours (sequential) | $\Theta(n\log n/\log\log n)$ |
+| **Ours (parallel)** | $\boldsymbol{\Theta(n/\log\log n)}$ |
+
+<div class="parallel-general-depth">
+
+For every space budget $H+1\le s\le n$,
+
+$$
+D^*(n,s)=\Theta\!\left(H+\frac ns\max\!\left\{\frac{H}{\log(s+1)},1+\log^*H\right\}\right)
+$$
+
+At full space $s=n$, $D^*(n,n)=\Theta(H)=\Theta(\log n)$.
+
+</div>
+<div class="parallel-result-reference">Our paper · Theorems 1.1, 3.7 · Lower bounds in Section 5</div>
+
+<!--
+약 1분. 동일한 완전 이진트리 n=2^H-1, 동일한 최소 공간 s=H+1에서 순차 KSS와 우리 순차·병렬 실행의 시간을 비교한다. 표의 KSS 행은 순차 전략을 매 동작 한 라운드로 실행한 상한 O(n log n)이다. 기존 병렬 binary-tree 알고리즘의 최적 하한으로 해석하지 않는다. KSS는 Theorem 5.5, Quantum 9, 1636 (2025)에서 이 순차 상한을 준다. 우리 순차 실행은 work와 전체 action 수가 상수배 관계라 depth도 Theta(n log n/log log n)이다. 최소 공간에서는 한 병렬 구성으로 work Theta(n log n/log log n), depth Theta(n/log log n)를 동시에 달성한다.
+
+일반 공간에서의 정확한 최적 depth는 제출 논문 Theorem 1.1의 식 (2)다. Theorem 3.7의 상한은 O(H+nH/(s log(s+1))+n lambda(H)/s)이고 두 양의 항의 합은 최댓값과 상수배로 동치다. Section 5의 critical-path, work/space, cumulative-storage 하한이 일치한다. H는 vertex 층 수, log* H는 1 이하가 될 때까지 이진 로그를 반복하는 횟수다. s=H+1이면 H/log H가 lambda(H)보다 점근적으로 커 depth Theta(n/log H)=Theta(n/log log n)이다. s=n이면 H 항이 지배적이므로 Theta(H)=Theta(log n)이다. 일반 공간에서는 work 최적화와 depth 최적화를 각각 수행하며, 두 최적값을 항상 같은 schedule이 달성한다는 주장은 하지 않는다.
+
+KMRV의 parallel 경로 결과는 다른 dependency graph에 대한 결과다. 결합법칙으로 그래프를 선택할 수 있는 application 비교는 이어지는 Associative reductions와 Depth comparison with KMRV 두 장에서 다룬다.
+Source: submitted manuscript, Theorem 1.1, Theorem 3.7, Section 5; KSS, https://doi.org/10.22331/q-2025-02-18-1636.
 -->
 
 ---
@@ -560,10 +879,14 @@ layout: default
 
 # Associative reductions
 
-<div class="lead">Same ordered inputs, different evaluation trees.</div>
+<div class="lead">Associativity → freedom to choose the evaluation order</div>
 <div class="columns-2">
 <div><h3>KMRV</h3><p>Left-to-right prefix path</p><p class="order-example">((a₁ ⊕ a₂) ⊕ a₃) ⊕ a₄</p></div>
 <div><h3>Our construction</h3><p>Balanced binary tree</p><p class="order-example">(a₁ ⊕ a₂) ⊕ (a₃ ⊕ a₄)</p></div>
+</div>
+
+<div class="shape-optimality">
+Our balanced-tree construction is asymptotically optimal over all binary evaluation trees at the same space budget.
 </div>
 
 <!--
@@ -587,13 +910,26 @@ H=5–17에서 KMRV 구현이 실행 가능한 최소 레지스터 수를 구해
 
 ---
 layout: default
+class: cfs-application
 ---
 
 # Elliptic-curve point-addition trees
 
+<div class="cfs-context">
+
+CFS attacks $n$-bit ECC using $\widetilde O(n^4)$ gates and $3.12n+o(n)$ logical qubits.
+
+</div>
+
+<div class="cfs-operation">
+
+Point addition on triples $P=(X,Y,Z)$: $\quad\lvert P_1\rangle\lvert P_2\rangle\lvert 0\rangle\longmapsto\lvert P_1\rangle\lvert P_2\rangle\lvert F_p(P_1,P_2)\rangle$.
+
+</div>
+
 <div class="lead small">31–41% less work at the same register budget.</div>
 
-| Curve | Registers | KSS work | Block cleanup work |
+| Curve | Registers | KSS work | Ours |
 |:--|--:|--:|--:|
 | P-224 | 7 | 203 | 135 |
 | P-256 | 7 | 238 | 159 |

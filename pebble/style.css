@@ -90,13 +90,13 @@
   color: #4d6460;
 }
 .computation-binary > .slidev-katex-wrapper {
-  margin: 28px 0;
+  margin: 8px 0;
 }
 .computation-binary {
-  font-size: 20px;
+  font-size: 18px;
 }
 .computation-addition {
-  margin-top: 18px;
+  margin-top: 10px;
 }
 .computation-scope {
   margin-top: 10px;
@@ -346,3 +346,340 @@
   margin: 10px 0;
   font-size: 1em;
 }
+
+.computation-pebble-chain {
+  display: block;
+  width: 100%;
+  max-width: 760px;
+  height: 110px;
+  margin: 12px auto 0;
+}
+.computation-pebble-chain line {
+  stroke: #82999a;
+  stroke-width: 2.3;
+}
+.computation-pebble-chain circle {
+  fill: #3d7770;
+  stroke: #315f59;
+  stroke-width: 2.3;
+}
+.computation-pebble-chain text {
+  font-family: var(--slidev-font-serif);
+  font-style: italic;
+  font-size: 27px;
+}
+.computation-pebble-chain .function-label {
+  fill: #284b48;
+}
+.computation-pebble-chain .input-label {
+  fill: white;
+}
+
+.computation-pebble-chain .function-index {
+  font-size: 17px;
+}
+
+.binary-computation-figure {
+  display: block;
+  width: 650px;
+  max-width: 100%;
+  height: auto;
+  margin: 12px auto 0;
+}
+
+.exorcism-math {
+  margin-top: 20px;
+}
+.exorcism-math .correction-row {
+  min-height: 52px;
+}
+.exorcism-math .correction-row .slidev-katex-wrapper > p {
+  margin: 3px 0;
+}
+.exorcism-math .correction-row .katex-display {
+  font-size: .99225em;
+  margin: 4px 0;
+}
+.exorcism-math .correction-identity {
+  font-size: 17.01px;
+  margin-bottom: 6px;
+}
+.exorcism-illustration {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  height: 96px;
+  margin-top: 10px;
+}
+.exorcism-ghost {
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+}
+.exorcism-priest {
+  width: 120px;
+  height: 112px;
+  object-fit: contain;
+}
+
+.exorcism-references {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.2;
+  color: #70847f;
+}
+.exorcism-references a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: #c4d0c8;
+  text-underline-offset: 3px;
+}
+
+.spooky-line-intro .intro-caption {
+  margin-top: 10px;
+}
+
+.trace-layout.root-computation-demo.with-code {
+  grid-template-columns: 38% 59%;
+}
+
+.trace-layout.cleanup-computation-demo.with-code {
+  width: calc(100% + 20px);
+  margin-left: -20px;
+  grid-template-columns: 32% 65%;
+}
+.trace-layout.cleanup-computation-demo .graph {
+  height: 280px;
+}
+
+.complete-tree-result .lead {
+  font-size: 23px;
+  margin-bottom: 14px;
+}
+.complete-tree-result table {
+  width: 100%;
+  margin: 12px 0 18px;
+  font-size: 19px;
+}
+.complete-tree-result th,
+.complete-tree-result td {
+  padding: 8px;
+}
+.space-work-tradeoff {
+  margin-top: 22px;
+}
+.space-work-tradeoff .katex-display {
+  margin: 14px 0 20px;
+  font-size: 1.05em;
+}
+.space-case p {
+  margin: 12px 0;
+  font-size: 18px;
+  color: #4d6460;
+}
+.space-work-reference {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 13px;
+  color: #7a8d80;
+}
+
+.parallel-minimum-space p {
+  margin: 0 0 14px;
+  font-size: 21px;
+  color: #3e655e;
+}
+.parallel-depth-result table {
+  margin: 12px 0 22px;
+  width: 100%;
+  font-size: 18px;
+}
+.parallel-depth-result th,
+.parallel-depth-result td {
+  padding: 7px 8px;
+}
+.parallel-general-depth > p {
+  margin: 12px 0;
+  font-size: 18px;
+  color: #4d6460;
+}
+.parallel-general-depth .katex-display {
+  margin: 12px 0 8px;
+  font-size: .95em;
+}
+.parallel-general-depth > p:last-child {
+  text-align: center;
+}
+.parallel-result-reference {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 12px;
+  color: #7a8d80;
+}
+
+.parallel-computation-circuit {
+  display: block;
+  width: 100%;
+  height: 300px;
+  object-fit: contain;
+  margin: 8px auto 20px;
+}
+.parallel-computation-explanation {
+  text-align: center;
+  color: #3e655e;
+}
+.parallel-computation-explanation p {
+  margin: 10px 0;
+  font-size: 21px;
+}
+
+.analysis-context p {
+  margin: 0;
+  font-size: 21px;
+  color: #617d75;
+  text-align: center;
+}
+.parallel-analysis .katex-display {
+  margin: 18px 0;
+  font-size: 1.08em;
+}
+.subtree-cost {
+  margin-top: 52px;
+}
+.subtree-cost .katex-display {
+  font-size: 1.5em;
+}
+.target-budget {
+  margin-top: 36px;
+}
+.target-budget .katex-display {
+  font-size: 1.18em;
+}
+.analysis-reference {
+  position: absolute;
+  bottom: 26px;
+  left: 110px;
+  right: 60px;
+  text-align: center;
+  font-size: 12px;
+  color: #7a8d80;
+}
+.cleanup-regimes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  margin-top: 38px;
+  text-align: center;
+}
+.cleanup-regimes h3 {
+  margin: 0 0 20px !important;
+  font-size: 23px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  opacity: 1 !important;
+  color: #3d7770;
+}
+.cleanup-regimes p {
+  margin: 18px 0;
+  font-size: 18px;
+  line-height: 1.4;
+  color: #4d6460;
+}
+.cleanup-regimes .katex-display {
+  font-size: .95em;
+  margin: 22px 0;
+}
+.stage-cancellation {
+  margin-top: 45px;
+}
+.stage-cancellation .katex-display {
+  font-size: 1.3em;
+}
+.stage-critical-path {
+  margin-top: 50px;
+  text-align: center;
+}
+.stage-critical-path > p {
+  margin: 0 0 24px;
+  font-size: 21px;
+  color: #617d75;
+}
+.parallel-upper-sum table {
+  margin: 26px 0 30px;
+  width: 100%;
+  font-size: 20px;
+}
+.parallel-upper-sum th,
+.parallel-upper-sum td {
+  padding: 9px 8px;
+}
+.budget-substitution p {
+  margin: 0 0 25px;
+  font-size: 20px;
+  text-align: center;
+  color: #617d75;
+}
+
+.block-cost-explanation {
+  max-width: 720px;
+  margin: 22px auto 0;
+  text-align: center;
+}
+.block-cost-explanation p {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.45;
+  color: #617d75;
+}
+
+.regime-height-detail .cleanup-regimes { margin-top: 30px; }
+.regime-height-detail .cleanup-regimes p { margin: 14px 0; }
+.regime-height-detail .cleanup-regimes .katex-display { margin: 16px 0; }
+
+.reversible-line-intro .trace-player.intro .graph { height: 290px; }
+
+.spooky-line-cost p { margin: 0; text-align: center; font-size: 21px; color: #617d75; }
+.kmrv-line-cost p { margin: 0 0 8px; text-align: center; font-size: 22px; color: #617d75; }
+.kmrv-line-demo .trace-player .graph { height: 270px; }
+.kmrv-line-demo .actionline { font-size: 12px; }
+.kmrv-line-reference { margin-top: 18px; text-align: center; color: #7a8d80; font-size: 12px; }
+
+.kmrv-line-demo .trace-player .controls { max-width: 600px; margin: 12px auto 0; }
+
+.kmrv-line-demo .trace-player .actionline { justify-content: center; }
+.kmrv-line-demo .trace-player .trace-stats { justify-content: center; }
+.kmrv-line-demo .trace-player .legend { margin-left: 24px; }
+
+.kmrv-line-demo .kmrv-line-cost p { margin-bottom: 0; }
+.kmrv-line-demo .trace-player .graph { height: 245px; margin-top: -10px; }
+.kmrv-line-demo .trace-player .controls { margin-top: 8px; }
+.kmrv-line-demo .kmrv-line-reference { margin-top: 16px; }
+
+.cfs-context p { margin: 0 0 22px; font-size: 18px; line-height: 1.4; color: #617d75; white-space: nowrap; }
+.cfs-application table { margin-top: 28px; }
+
+.cfs-application .cfs-context p { margin-bottom: 12px; }
+.cfs-operation p { margin: 0 0 22px; font-size: 17px; line-height: 1.5; color: #617d75; white-space: nowrap; }
+.cfs-application table { margin-top: 22px; }
+
+.space-limited-question { font-size: 21px; line-height: 1.4; text-align: center; color: #3e655e; margin-bottom: 8px; white-space: nowrap; }
+.space-limited-question strong { color: #c74343; font-weight: 700; margin-right: 10px; }
+
+.reversible-line-intro { margin-top: -32px; }
+
+.simple-line-intro .trace-player .actionline { margin-top: -60px; }
+.simple-line-intro .trace-player .controls { margin-top: 8px; }
+.simple-line-intro .trace-player .intro-metrics { margin-top: 14px; }
+
+.root-computation-demo .trace-player .graph { transform: scale(1.08); transform-origin: center; }
+
+.kmrv-line-demo .trace-player .trace-stats { font-size: 17px; gap: 20px; }
+.kmrv-line-demo .trace-player .trace-stats b { font-size: 23px; }
+.kmrv-line-demo .trace-player .legend { font-size: 15px; }
+
+.slidev-layout.parallel-analysis h1, .slidev-layout.parallel-depth-result h1 { font-size: 30px; }
+
+.shape-optimality { max-width: 730px; margin: 74px auto 0; text-align: center; font-size: 23px; line-height: 1.5; color: #284b48; }

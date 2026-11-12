@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="20 20 190 200" fill="none">
+  <title>Priest holding a cross</title>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M55 40V102M35 61H75" stroke="#D8A44D" stroke-width="9"/>
+    <path d="M135 100L89 116L58 92" stroke="#315F59" stroke-width="19"/>
+    <path d="M78 106L69 99" stroke="white" stroke-width="8"/>
+    <circle cx="58" cy="92" r="7" fill="white" stroke="#315F59" stroke-width="3"/>
+    <path d="M125 90Q147 83 168 96L188 207Q153 218 115 207Z" fill="#315F59"/>
+    <path d="M168 100Q194 116 193 151L186 169" stroke="#315F59" stroke-width="16"/>
+    <circle cx="185" cy="173" r="7" fill="white" stroke="#315F59" stroke-width="3"/>
+    <path d="M139 80V93H153V80" fill="#315F59"/>
+    <path d="M140 89H152V96H140Z" fill="white"/>
+    <path d="M132 103L143 131L135 202M160 103L153 131L164 206" stroke="#D8A44D" stroke-width="5"/>
+    <path d="M145 31C130 30 121 41 122 57C123 73 134 81 148 78C164 75 171 63 167 48C164 36 157 31 145 31Z" fill="white" stroke="#315F59" stroke-width="4"/>
+    <path d="M124 49Q127 28 146 31Q162 31 167 47Q149 50 135 41Z" fill="#315F59"/>
+    <circle cx="133" cy="57" r="2.2" fill="#315F59"/>
+    <circle cx="146" cy="56" r="2.2" fill="#315F59"/>
+    <path d="M135 67Q140 71 145 66" stroke="#315F59" stroke-width="2.5"/>
+  </g>
+</svg>

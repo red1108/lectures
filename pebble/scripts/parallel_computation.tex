@@ -1,0 +1,26 @@
+\documentclass[border=8pt]{standalone}
+\usepackage{quantikz}
+\definecolor{ink}{HTML}{284B48}
+\definecolor{firstband}{HTML}{E8F1EA}
+\definecolor{secondband}{HTML}{F8EEDC}
+\newcommand{\depthband}[2]{\gategroup[wires=8,steps=2,background,style={draw=none,fill=#2,rounded corners=3pt,inner xsep=7pt,inner ysep=7pt},label style={label position=above,anchor=south,text=ink,yshift=1mm}]{\text{Depth #1}}}
+\begin{document}
+\color{ink}
+% Each pair of gate columns forms ONE parallel depth.
+% Empty wire columns separate successive depths.
+% Depth 1: CCZ(1,2,5), CCZ(3,4,8).
+% Depth 2: CCZ(2,7,8), CCZ(3,5,6).
+% Depth 3: CCZ(1,4,7), CCZ(2,5,6).
+% Depth 4: CCZ(1,3,6), CCZ(4,5,8).
+% All three filled dots of each connected component denote a CCZ gate.
+\begin{quantikz}[row sep={0.43cm,between origins},column sep={0.95cm,between origins},color=ink]
+\lstick{$q_1$} & \ctrl{1}\depthband{1}{firstband} & \qw & \qw & \qw\depthband{2}{secondband} & \qw & \qw & \ctrl{3}\depthband{3}{firstband} & \qw & \qw & \ctrl{2}\depthband{4}{secondband} & \qw & \qw \\
+\lstick{$q_2$} & \ctrl{3} & \qw & \qw & \ctrl{5} & \qw & \qw & \qw & \ctrl{3} & \qw & \qw & \qw & \qw \\
+\lstick{$q_3$} & \qw & \ctrl{1} & \qw & \qw & \ctrl{2} & \qw & \qw & \qw & \qw & \ctrl{3} & \qw & \qw \\
+\lstick{$q_4$} & \qw & \ctrl{4} & \qw & \qw & \qw & \qw & \ctrl{3} & \qw & \qw & \qw & \ctrl{1} & \qw \\
+\lstick{$q_5$} & \control{} & \qw & \qw & \qw & \ctrl{1} & \qw & \qw & \ctrl{1} & \qw & \qw & \ctrl{3} & \qw \\
+\lstick{$q_6$} & \qw & \qw & \qw & \qw & \control{} & \qw & \qw & \control{} & \qw & \control{} & \qw & \qw \\
+\lstick{$q_7$} & \qw & \qw & \qw & \ctrl{1} & \qw & \qw & \control{} & \qw & \qw & \qw & \qw & \qw \\
+\lstick{$q_8$} & \qw & \control{} & \qw & \control{} & \qw & \qw & \qw & \qw & \qw & \qw & \control{} & \qw
+\end{quantikz}
+\end{document}

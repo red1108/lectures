@@ -1,6 +1,6 @@
 # Pebbling computations
 
-A 26-slide, 15–20 minute introductory talk using Slidev and the
+A 34-slide, 15–20 minute introductory talk using Slidev and the
 [Bricks theme](https://github.com/slidevjs/themes/tree/main/packages/theme-bricks).
 The slides are in English and presenter notes are in Korean.
 
@@ -40,6 +40,15 @@ bundled browser. Screenshots and review files are generated in `.generated/`.
 npm run export
 ```
 
+For a single HTML file that opens directly in a browser, including offline fonts
+and interactive demos:
+
+```sh
+npm run build:standalone
+```
+
+The file is generated at `.generated/pebble-talk.html`.
+
 PDF export creates `pebble-talk.pdf`. It captures static states. Present the
 interactive animations from the browser. An existing browser can be selected
 with `npm run export -- --executable-path /path/to/chrome`.
@@ -48,8 +57,7 @@ with `npm run export -- --executable-path /path/to/chrome`.
 
 Recorded schedules in `traces/native.json` come from the
 [paper's C++ implementation](https://github.com/red1108/pebble) at commit
-`d5081286aaa1b99c6caa220ce05966b308cbd2ed`. The fixture includes source hashes and
-records a clean source checkout. It lets the presentation run without that
+`d5081286aaa1b99c6caa220ce05966b308cbd2ed`. The fixture includes source hashes and records any tracked source changes. It lets the presentation run without that
 repository or a C++ compiler. Replay validates dependencies, register occupancy,
 parallel active sets, work, and final states.
 
@@ -68,7 +76,8 @@ Line strategies are adapted from
 [Gidney's 2019 article](https://algassert.com/post/1905), with explicit ghost
 recomputation and cleanup. The block-cleanup idea diagram is a conceptual
 illustration. The algorithm trace slides replay recorded implementation actions.
-The KMRV path slide is retained with `disabled: true` and is omitted from the talk.
+The KMRV demo uses a length-16 path with a fixed anchor and retained endpoint.
+An older short path slide is retained with `disabled: true`.
 Detailed mathematical explanations and source references are in presenter notes.
 The root-computation pseudocode follows Algorithm 1, `SequentialPebble(T)`,
 in the submitted manuscript; its action lines follow the recorded trace.
@@ -98,3 +107,13 @@ Source, dependency manifests and lockfiles, required figure assets, recorded
 traces, and generation/validation scripts are tracked. `node_modules/`, `dist/`,
 `.generated/`, and `pebble-talk.pdf` are ignored. Authoring conventions are in the
 repository's `AGENTS.md`, `phillosophy.md`, and `slidev.md`.
+
+The parallel-computation circuit is drawn with LaTeX Quantikz. To regenerate
+its SVG and PNG assets, install Quantikz and its TeX dependencies, then run:
+
+```sh
+bash scripts/build_parallel_circuit.sh
+```
+
+The script requires `pdflatex` and `pdftocairo`. Intermediate TeX/PDF files stay
+in `.generated/parallel-circuit/`.
